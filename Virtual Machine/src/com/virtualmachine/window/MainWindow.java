@@ -68,7 +68,7 @@ public class MainWindow extends javax.swing.JFrame {
 
             },
             new String [] {
-                "I", "Instrução", "Atributo 1", "Atributo 2"
+                "I", "Rótulo", "Instrução", "Atributo 1", "Atributo 2"
             }
         ));
         cod_maq.setShowHorizontalLines(false);
@@ -234,24 +234,21 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed
+    private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed    	
     	cod_maq.setRowSelectionAllowed(true);
     	if (execucaoCompleta.isSelected()) {
-    		for (int i=0; i < core.getCurrentAssembly().getCommands().size(); i++) {
-    	    	cod_maq.setRowSelectionInterval(core.getProgramCounter(), core.getProgramCounter());
-    			System.out.println("gogo");
-    			core.runStep(core.getProgramCounter());
+    		while (!core.isExecutionFinished() && !core.printingIO) {
+    			core.runStep();
     		}
     	} else {
-    		for (int i=0; i < core.getCurrentAssembly().getCommands().size(); i++) {
-    			core.runStep(core.getProgramCounter());
-    		}
+    		core.runStep();
     	}
 
     }//GEN-LAST:event_executarActionPerformed
 
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
     	core = Core.getInstance();
+    	core.reset();
     	core.setParenteWindow(this);
     	//Create a file chooser
     	final JFileChooser fc = new JFileChooser();
@@ -298,13 +295,15 @@ public class MainWindow extends javax.swing.JFrame {
     public void populateInterface(AssemblyFile af) {
     	if (af != null) {
 	    	DefaultTableModel dtm = (DefaultTableModel) cod_maq.getModel();
+			dtm.getDataVector().removeAllElements();
 	    	
 	    	LinkedList<String> commands = af.getCommands();
 	    	LinkedList<String> firstAttributes = af.getFirstAttributes();
 	    	LinkedList<String> secondAttributes = af.getSecondAttributes();
+	    	LinkedList<String> identifiers = af.getIdentifiers();
 	    	
 	    	for (int i=0; i < commands.size(); i++) {
-	    		dtm.addRow(new String[]{String.valueOf(i+1), commands.get(i), firstAttributes.get(i), secondAttributes.get(i)});
+	    		dtm.addRow(new String[]{String.valueOf(i), identifiers.get(i), commands.get(i), firstAttributes.get(i), secondAttributes.get(i)});
 	    	}
     	}
     }
@@ -314,7 +313,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu ajuda;
     private javax.swing.JMenu arquivo;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JTable cod_maq;
+    public javax.swing.JTable cod_maq;
     private javax.swing.JMenuItem comandos;
     private javax.swing.JTextArea execLog;
     private javax.swing.JRadioButton execucaoCompleta;
@@ -330,7 +329,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable memoria;
+    public javax.swing.JTable memoria;
     private javax.swing.JMenuBar menu;
     public javax.swing.JTextArea saida;
     private javax.swing.JMenuItem sair;

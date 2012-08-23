@@ -3,9 +3,9 @@ package com.virtualmachine;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.StringTokenizer;
 
 public class AssemblyFile {
 	
@@ -27,19 +27,41 @@ public class AssemblyFile {
 	
 	private void parse(String path) {
 		String line;
-		Pattern p = Pattern.compile("^(\\w*)\\s+(\\w+)\\s+(\\w*)\\s*(\\w*)\\s*$");
-		Matcher m;
+		StringTokenizer st;
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(path));
 			
 			while ((line = br.readLine()) != null) {
-				m = p.matcher(line);
-				m.matches();
-				identifiers.add(m.group(1));
-				commands.add(m.group(2));
-				firstAttributes.add(m.group(3));
-				secondAttribuets.add(m.group(4));
+				st = new StringTokenizer(line, " ");
+				if (st.countTokens() == 3) {
+					while (st.hasMoreTokens()) {
+						identifiers.add("");
+						commands.add(st.nextToken());
+						firstAttributes.add(st.nextToken());
+						secondAttribuets.add(st.nextToken());
+					}
+				} else if (st.countTokens() == 2) {
+					while (st.hasMoreTokens()) {
+						String nt = st.nextToken();
+						if (Arrays.asList(Core.COMMANDS).contains(nt)) {
+							identifiers.add("");
+							commands.add(nt);
+							firstAttributes.add(st.nextToken());
+							secondAttribuets.add("");
+						} else {
+							identifiers.add(nt);
+							commands.add(st.nextToken());
+							firstAttributes.add("");
+							secondAttribuets.add("");
+						}
+					}
+				} else if (st.countTokens() == 1) {
+					identifiers.add("");
+					commands.add(st.nextToken());
+					firstAttributes.add("");
+					secondAttribuets.add("");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
