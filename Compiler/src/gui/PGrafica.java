@@ -1,16 +1,17 @@
 package gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
+import javax.swing.KeyStroke;
 
 import core.Core;
 
@@ -63,24 +64,24 @@ public class PGrafica extends javax.swing.JFrame {
 
         jTextAreaCodigo.setColumns(20);
         jTextAreaCodigo.setRows(5);
-        jTextAreaCodigo.addKeyListener(new KeyListener() {			
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				if (arg0.getKeyChar() == '\t') {
-					jTextAreaCodigo.setText(jTextAreaCodigo.getText().replace("\t", "  "));
-				}
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-				
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				
-			}
-		});
+        jTextAreaCodigo.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent arg0) {
+                if (arg0.getKeyChar() == '\t') {
+                    jTextAreaCodigo.setText(jTextAreaCodigo.getText().replace("\t", "  "));
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent arg0) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+
+            }
+        });
         jScrollPane1.setViewportView(jTextAreaCodigo);
 
         jLabelLinhaColuna.setText("Linhas, Colunas");
@@ -93,19 +94,21 @@ public class PGrafica extends javax.swing.JFrame {
 
         jButtonCompilar.setText("Compilar");
         jButtonCompilar.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Core c = Core.getInstance();
                 c.setSourceFile(currentFile);
                 c.startAnalysis();
             }
         });
-        
+
         jLabelCompilar.setText("jLabel2");
 
         jMenuArquivo.setText("Arquivo");
 
         jMenuItemAbrir.setText("Abrir");
         jMenuItemAbrir.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemAbrirActionPerformed(evt);
             }
@@ -114,33 +117,41 @@ public class PGrafica extends javax.swing.JFrame {
 
         jMenuItemSalvar.setText("Salvar");
         jMenuItemSalvar.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					PrintWriter pw = new PrintWriter(new FileWriter(currentFile));
-					for (String line : jTextAreaCodigo.getText().split("\n")) {
-						pw.println(line);
-					}
-					pw.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}				
-			}
-		});
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    if (currentFile == null) {
+                        JFileChooser jfc = new JFileChooser();
+                        jfc.showSaveDialog(PGrafica.this);
+                        currentFile = jfc.getSelectedFile();
+
+                        setTitle(currentFile.getAbsolutePath());
+                    }
+                    PrintWriter pw = new PrintWriter(new FileWriter(currentFile));
+                    for (String line : jTextAreaCodigo.getText().split("\n")) {
+                        pw.println(line);
+                    }
+                    pw.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        jMenuItemSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         jMenuArquivo.add(jMenuItemSalvar);
-        
+
         jMenuItemSalvarComo.setText("Salvar Como");
         jMenuItemSalvarComo.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfc = new JFileChooser();
-				jfc.showSaveDialog(PGrafica.this);
-			}
-		});
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                JFileChooser jfc = new JFileChooser();
+                jfc.showSaveDialog(PGrafica.this);
+            }
+        });
         jMenuArquivo.add(jMenuItemSalvarComo);
-        
+
         jMenuItemFechar.setText("Fechar");
         jMenuArquivo.add(jMenuItemFechar);
 
@@ -157,73 +168,76 @@ public class PGrafica extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelArquivo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabelLinhaColuna, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelErros)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(99, 99, 99)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButtonCompilar)
-                            .addComponent(jLabelCompilar))))
-                .addContainerGap(23, Short.MAX_VALUE))
-        );
+                                .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabelArquivo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabelLinhaColuna, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelErros)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(99, 99, 99)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jButtonCompilar)
+                                                        .addComponent(jLabelCompilar))))
+                                                        .addContainerGap(23, Short.MAX_VALUE))
+                );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelArquivo)
-                    .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabelLinhaColuna)
-                .addGap(18, 18, 18)
-                .addComponent(jLabelErros)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButtonCompilar)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabelCompilar)))
-                .addContainerGap(46, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabelArquivo)
+                                .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabelLinhaColuna)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabelErros)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jButtonCompilar)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jLabelCompilar)))
+                                                .addContainerGap(46, Short.MAX_VALUE))
+                );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirActionPerformed
-       
+
         JFileChooser abrirArquivo = new JFileChooser();
-        
+
         if(abrirArquivo.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-        	currentFile = abrirArquivo.getSelectedFile();
-        	try {
-				BufferedReader br = new BufferedReader(new FileReader(currentFile));
-				String line;
-				while((line = br.readLine()) != null) {
-					jTextAreaCodigo.append(line + "\n");
-				}
-				br.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            currentFile = abrirArquivo.getSelectedFile();
+            try {
+                jTextAreaCodigo.setText("");
+                BufferedReader br = new BufferedReader(new FileReader(currentFile));
+                String line;
+                while((line = br.readLine()) != null) {
+                    jTextAreaCodigo.append(line + "\n");
+                }
+                br.close();
+
+                setTitle(currentFile.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        
-        
+
+
     }//GEN-LAST:event_jMenuItemAbrirActionPerformed
 
-   
+
     private File currentFile;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCompilar;

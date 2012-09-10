@@ -46,6 +46,10 @@ public class Core implements Runnable {
     private static final int sLessThan = 10032;
     private static final int sLessThanEq = 10033;
     private static final int sNotEq = 10034;
+    private static final int sPlus = 10035;
+    private static final int sMinus = 10036;
+    private static final int sTimes = 10037;
+    private static final int sIdentifier = 10038;
 
 
     private static Core instance;
@@ -105,9 +109,9 @@ public class Core implements Runnable {
                 if (c != -1) {
                     Token token = getToken();
                     if (token != null) {
-                        System.out.println(token.getLexeme());
+                        System.out.println(token.getSymbol() + " -> " + token.getLexeme());
                         // insere lista
-                    }
+                    } else System.out.println("eerrrrooo");
                 }
             }
 
@@ -203,11 +207,56 @@ public class Core implements Runnable {
     }
 
     private Token handleArithmeticOperator() {
-        return null;
+        int c;
+        String operator = "" + currentChar;
+        Token token = new Token(0, operator);
+
+        try {
+            if (currentChar == '+') {
+                token.setSymbol(sPlus);
+            } else if (currentChar == '-') {
+                token.setSymbol(sMinus);
+            } else if (currentChar == '*') {
+                token.setSymbol(sTimes);
+            }
+
+            c = br.read();
+            currentChar = (char) c;
+
+            return token;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private Token handleAttribution() {
-        return null;
+        int c;
+        String operator = "" + currentChar;
+        Token token = new Token(0, operator);
+
+        try {
+            c = br.read();
+            currentChar = (char) c;
+
+            if (currentChar == '=') {
+                operator += currentChar;
+                token.setLexeme(operator);
+                token.setSymbol(sAttribution);
+            }
+
+            c = br.read();
+            currentChar = (char) c;
+
+            if (token.getSymbol() == 0) {
+                return null;
+            } else {
+                return token;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private Token handleIdentifierAndReservedKeyword() {
@@ -269,6 +318,8 @@ public class Core implements Runnable {
                 token.setSymbol(sOr);
             } else if (id.equals("nao")) {
                 token.setSymbol(sNot);
+            } else {
+                token.setSymbol(sIdentifier);
             }
 
         } catch (Exception e) {
@@ -293,7 +344,7 @@ public class Core implements Runnable {
                 currentChar = (char) c;
             }
 
-            return new Token(0, number);
+            return new Token(sNumber, number);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
