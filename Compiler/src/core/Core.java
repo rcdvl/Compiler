@@ -193,6 +193,12 @@ public class Core implements Runnable {
 
                         c = br.read();
                         currentChar = (char) c;
+                    } else if (currentChar == '>' ) {
+                        operator += currentChar;
+                        token.setSymbol(sNotEq);
+
+                        c = br.read();
+                        currentChar = (char) c;
                     } else {
                         token.setSymbol(sLessThan);
                     }
