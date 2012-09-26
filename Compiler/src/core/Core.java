@@ -50,7 +50,7 @@ public class Core implements Runnable {
     private static final int sMinus = 10036;
     private static final int sTimes = 10037;
     private static final int sIdentifier = 10038;
-
+    private static final int sColon = 10039;
 
     private static Core instance;
     private File sourceFile;
@@ -249,10 +249,12 @@ public class Core implements Runnable {
                 operator += currentChar;
                 token.setLexeme(operator);
                 token.setSymbol(sAttribution);
-            }
 
-            c = br.read();
-            currentChar = (char) c;
+                c = br.read();
+                currentChar = (char) c;
+            } else {
+                token.setSymbol(sColon);
+            }
 
             if (token.getSymbol() == 0) {
                 return null;
