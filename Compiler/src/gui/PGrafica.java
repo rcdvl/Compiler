@@ -14,6 +14,7 @@ import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
 
 import core.Core;
+import core.Syntatic;
 
 /**
  *
@@ -98,7 +99,11 @@ public class PGrafica extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Core c = Core.getInstance();
                 c.setSourceFile(currentFile);
-                c.startAnalysis();
+                //                c.startAnalysis();
+                Syntatic s = Syntatic.getInstance();
+                c.setSyntatic(s);
+                s.setCore(c);
+                new Thread(s).start();
             }
         });
 

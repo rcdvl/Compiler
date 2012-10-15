@@ -1,9 +1,12 @@
 package core;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class Core implements Runnable {
@@ -54,11 +57,16 @@ public class Core implements Runnable {
 
     private static Core instance;
     private File sourceFile;
-    private ArrayList<Token> tokens;
     private char currentChar;
     private BufferedReader br;
+    private BufferedWriter bw;
+    private int c;
+    private Token token;
+    private Syntatic syntatic;
+    private boolean firstRun = true;
 
     private Core() {
+
     }
 
     public static Core getInstance() {
@@ -75,7 +83,21 @@ public class Core implements Runnable {
 
     @Override
     public void run() {
+        try {
+            if (firstRun) {
+                File log = new File("log.txt");
+                bw = new BufferedWriter(new FileWriter(log));
+                c = br.read();
+                currentChar = (char) c;
+                firstRun = false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         analyzeLexically();
+        synchronized (syntatic) {
+            syntatic.notify();
+        }
     }
 
     /**
@@ -84,38 +106,46 @@ public class Core implements Runnable {
      * @return
      */
     public int analyzeLexically() {
-        int c;
         try {
-            br = new BufferedReader(new FileReader(sourceFile));
-            c = br.read();
-            currentChar = (char) c;
-            while (currentChar != -1) {
-                while (currentChar == '{' || currentChar == ' ' ||
-                        currentChar == '\r' || currentChar == '\n' && c != -1) {
-                    if (currentChar == '{') {
-                        while (currentChar != '}' && c != -1) {
-                            c = br.read();
-                            currentChar = (char) c;
-                        }
+            //            while (currentChar != -1) {
+            while (currentChar == '{' || currentChar == ' ' ||
+                    currentChar == '\r' || currentChar == '\n' && c != -1) {
+                if (currentChar == '{') {
+                    while (currentChar != '}' && c != -1) {
                         c = br.read();
                         currentChar = (char) c;
                     }
-
-                    while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' && c != -1) {
-                        c = br.read();
-                        currentChar = (char) c;
-                    }
+                    c = br.read();
+                    currentChar = (char) c;
                 }
-                if (c != -1) {
-                    Token token = getToken();
-                    if (token != null) {
-                        System.out.println(token.getSymbol() + " -> " + token.getLexeme());
-                        // insere lista
-                    } else System.out.println("eerrrrooo");
+
+                while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' && c != -1) {
+                    c = br.read();
+                    currentChar = (char) c;
                 }
             }
-
-            br.close();
+            if (c != -1) {
+                token = parseToken();
+                if (token != null) {
+                    // System.out.println(token.getSymbol() + " -> " + token.getLexeme());
+                    bw.write("Simbolo: " + token.getSymbol() + " , lexema: " + token.getLexeme() + "\n");
+                    // insere lista
+                } else {
+                    bw.write("Erro\n");
+                    bw.close();
+                    //System.out.println("eerrrrooo");
+                    c = br.read();
+                    currentChar = (char) c;
+                    return -1;
+                }
+            } else {
+                //                token = null;
+                bw.write("-------------- fim de uma execucao -------------\n\n");
+                bw.flush();
+                bw.close();
+                return -1;
+            }
+            //            }
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -123,7 +153,7 @@ public class Core implements Runnable {
         return 0;
     }
 
-    private Token getToken() {
+    private Token parseToken() {
         if (Character.isDigit(currentChar)) {
             return(handleDigit());
         } else if (Character.isLetter(currentChar)) {
@@ -365,5 +395,18 @@ public class Core implements Runnable {
 
     public void setSourceFile(File sourceFile) {
         this.sourceFile = sourceFile;
+        try {
+            br = new BufferedReader(new FileReader(sourceFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setSyntatic(Syntatic s) {
+        syntatic = s;
     }
 }

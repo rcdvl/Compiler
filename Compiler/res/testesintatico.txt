@@ -1,0 +1,91 @@
+
+
+programa teste;
+
+var int:inteiro; b:booleano;
+    n,i,j:inteiro; val: inteiro;
+
+funcao fat:inteiro;
+var v:inteiro;
+inicio
+   se n <= 0 entao fat:=1
+   senao inicio
+           v:=n;
+           n:=n-1;
+           fat:=v*fat
+        fim
+fim; {fim de fat}
+
+funcao p1:booleano;
+var i:inteiro;
+	procedimento p2;
+	var i:inteiro;
+		funcao p3:inteiro;
+		var i:inteiro;
+		inicio
+			val:=val+1;
+			i:=(((val + ( val - (val * (val div 10) div (val * 10)) +
+				(val * (val div 10) div (val * 10)) ) - 
+				(val - (val * (val div 10) div (val * 10)) +
+				(val * (val div 10) div (val * 10)))
+				)));
+			p3:= i;
+		fim;
+	inicio
+		val:=val+1;
+		i:=(((val + ( val - (val * (val div 10) div (val * 10)) +
+			(val * (val div 10) div (val * 10)) ) - 
+			(val - (val * (val div 10) div (val * 10)) +
+			(val * (val div 10) div (val * 10)))
+			)));
+		val:=p3;
+	fim;
+inicio
+	val:=val+1;
+	i:=(((val + ( val - (val * (val div 10) div (val * 10)) +
+		(val * (val div 10) div (val * 10)) ) - 
+		(val - (val * (val div 10) div (val * 10)) +
+		(val * (val div 10) div (val * 10)))	
+		)));
+	se val < 10 entao 
+                            p2;
+                            p1:= verdadeiro;
+fim; 
+
+procedimento p4;
+var i:inteiro;
+inicio
+	i:=0;
+	val:=i;i:=8;
+	escreva(val);
+	 se p1
+	entao escreva(i)
+fim;
+
+inicio
+   i:=0;
+   enquanto i < 3 faca
+   inicio
+      leia(n); {leitura do valor
+
+
+
+		para o qual se quer
+
+
+
+		calcular o fatorial
+    } i:= i+1;
+      j:=fat;
+      												
+      escreva(j);
+   fim
+
+   {agora comeca a chamada dos proce
+			dimentos
+							};
+
+   p4; 
+
+fim.
+
