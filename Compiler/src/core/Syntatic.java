@@ -229,8 +229,7 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeFunctionCall() {
-        // TODO Auto-generated method stub
-
+        token = runLexic();
     }
 
     private void analyzeAttrAndProcCall() {
@@ -243,13 +242,24 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeProcedureCall() {
-        // TODO Auto-generated method stub
-
+        if (token.getSymbol() != Core.sIdentifier) {
+            // erro, esperava identificador na chamada do procedimento
+        }
     }
 
     private void analyzeAttribution() {
-        // TODO Auto-generated method stub
+        token = runLexic();
 
+        if (token.getSymbol() != Core.sIdentifier) {
+            // erro, esperava identificador na chamada do procedimento
+        } else {
+            token = runLexic();
+            if (token.getSymbol() == Core.sAttribution) {
+                analyzeExpression();
+            } else {
+                // erro, esperava-se um '=' na atribuicao
+            }
+        }
     }
 
     private void analyzeSubRoutines() {
