@@ -15,45 +15,45 @@ public class Core implements Runnable {
     private static final String[] relationalOperators = { "<", ">", "=" };
     private static final String[] punctuationOperators = { ";", ",", "(", ")", "." };
 
-    private static final int sProgram = 1001;
-    private static final int sIf = 1002;
-    private static final int sThen = 1003;
-    private static final int sElse = 1004;
-    private static final int sWhile = 1005;
-    private static final int sDo = 1006;
-    private static final int sBegin = 1007;
-    private static final int sEnd = 1008;
-    private static final int sWrite = 1009;
-    private static final int sRead = 10010;
-    private static final int sVar = 10011;
-    private static final int sInteger = 10012;
-    private static final int sBoolean = 10013;
-    private static final int sTrue = 10014;
-    private static final int sFalse = 10015;
-    private static final int sProcedure = 10016;
-    private static final int sFunction = 10017;
-    private static final int sDiv = 10018;
-    private static final int sAnd = 10019;
-    private static final int sOr = 10020;
-    private static final int sNot = 10021;
-    private static final int sComma = 10022;
-    private static final int sDot = 10023;
-    private static final int sOpenParentheses = 10024;
-    private static final int sCloseParentheses = 10025;
-    private static final int sSemicolon = 10026;
-    private static final int sAttribution = 10027;
-    private static final int sNumber = 10028;
-    private static final int sGreaterThan = 10029;
-    private static final int sGreaterThanEq = 10030;
-    private static final int sEquals = 10031;
-    private static final int sLessThan = 10032;
-    private static final int sLessThanEq = 10033;
-    private static final int sNotEq = 10034;
-    private static final int sPlus = 10035;
-    private static final int sMinus = 10036;
-    private static final int sTimes = 10037;
-    private static final int sIdentifier = 10038;
-    private static final int sColon = 10039;
+    public static final int sProgram = 1001;
+    public static final int sIf = 1002;
+    public static final int sThen = 1003;
+    public static final int sElse = 1004;
+    public static final int sWhile = 1005;
+    public static final int sDo = 1006;
+    public static final int sBegin = 1007;
+    public static final int sEnd = 1008;
+    public static final int sWrite = 1009;
+    public static final int sRead = 10010;
+    public static final int sVar = 10011;
+    public static final int sInteger = 10012;
+    public static final int sBoolean = 10013;
+    public static final int sTrue = 10014;
+    public static final int sFalse = 10015;
+    public static final int sProcedure = 10016;
+    public static final int sFunction = 10017;
+    public static final int sDiv = 10018;
+    public static final int sAnd = 10019;
+    public static final int sOr = 10020;
+    public static final int sNot = 10021;
+    public static final int sComma = 10022;
+    public static final int sDot = 10023;
+    public static final int sOpenParentheses = 10024;
+    public static final int sCloseParentheses = 10025;
+    public static final int sSemicolon = 10026;
+    public static final int sAttribution = 10027;
+    public static final int sNumber = 10028;
+    public static final int sGreaterThan = 10029;
+    public static final int sGreaterThanEq = 10030;
+    public static final int sEquals = 10031;
+    public static final int sLessThan = 10032;
+    public static final int sLessThanEq = 10033;
+    public static final int sNotEq = 10034;
+    public static final int sPlus = 10035;
+    public static final int sMinus = 10036;
+    public static final int sTimes = 10037;
+    public static final int sIdentifier = 10038;
+    public static final int sColon = 10039;
 
     private static Core instance;
     private File sourceFile;
@@ -77,7 +77,7 @@ public class Core implements Runnable {
         return instance;
     }
 
-    public void startAnalysis() {
+    public void getNextToken() {
         new Thread(this).start();
     }
 
@@ -139,7 +139,7 @@ public class Core implements Runnable {
                     return -1;
                 }
             } else {
-                //                token = null;
+                token = new Token(7, "7");
                 bw.write("-------------- fim de uma execucao -------------\n\n");
                 bw.flush();
                 bw.close();
