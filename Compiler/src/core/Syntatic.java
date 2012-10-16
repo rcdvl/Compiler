@@ -150,11 +150,85 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeWhile() {
-        // TODO Auto-generated method stub
-
+        token = runLexic();
+        analyzeExpression();
+        if (token.getSymbol() == Core.sDo) {
+            token = runLexic();
+            analyzeSimpleCommand();
+        } else {
+            // erro, esperava do depois do while
+        }
     }
 
     private void analyzeIf() {
+        token = runLexic();
+        analyzeExpression();
+        if (token.getSymbol() == Core.sThen) {
+            token = runLexic();
+            analyzeSimpleCommand();
+            if (token.getSymbol() == Core.sElse) {
+                token = runLexic();
+                analyzeSimpleCommand();
+            }
+        } else {
+            // erro, esperava entao depois do if
+        }
+    }
+
+    private void analyzeExpression() {
+        analyzeSimpleExpression();
+        if (token.getSymbol() == Core.sGreaterThan || token.getSymbol() == Core.sGreaterThanEq ||
+                token.getSymbol() == Core.sEquals || token.getSymbol() == Core.sLessThan ||
+                token.getSymbol() == Core.sLessThanEq || token.getSymbol() == Core.sNotEq) {
+            token = runLexic();
+            analyzeSimpleExpression();
+        }
+    }
+
+    private void analyzeSimpleExpression() {
+        if (token.getSymbol() == Core.sPlus || token.getSymbol() == Core.sMinus) {
+            token = runLexic();
+        }
+        analyzeTerm();
+
+        while (token.getSymbol() == Core.sPlus || token.getSymbol() == Core.sMinus || token.getSymbol() == Core.sOr) {
+            token = runLexic();
+            analyzeTerm();
+        }
+    }
+
+    private void analyzeTerm() {
+        analyzeFactor();
+        while (token.getSymbol() == Core.sTimes || token.getSymbol() == Core.sDiv || token.getSymbol() == Core.sIf) {
+            token = runLexic();
+            analyzeFactor();
+        }
+    }
+
+    private void analyzeFactor() {
+        if (token.getSymbol() == Core.sIdentifier) {
+            analyzeFunctionCall();
+        } else if (token.getSymbol() == Core.sNumber) {
+            token = runLexic();
+        } else if (token.getSymbol() == Core.sNot) {
+            token = runLexic();
+            analyzeFactor();
+        } else if (token.getSymbol() == Core.sOpenParentheses) {
+            token = runLexic();
+            analyzeExpression();
+            if (token.getSymbol() == Core.sCloseParentheses) {
+                token = runLexic();
+            } else {
+                // erro, esperava fecha parenteses depois da expressao
+            }
+        } else if (token.getLexeme().equals("verdadeiro") || token.getLexeme().equals("falso")) {
+            token = runLexic();
+        } else {
+            // erro, blablbla
+        }
+    }
+
+    private void analyzeFunctionCall() {
         // TODO Auto-generated method stub
 
     }
@@ -179,8 +253,63 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeSubRoutines() {
-        // TODO Auto-generated method stub
+        int flag = 0;
+        if (token.getSymbol() == Core.sProcedure || token.getSymbol() == Core.sFunction) {
 
+        }
+
+        while (token.getSymbol() == Core.sProcedure || token.getSymbol() == Core.sFunction) {
+            if (token.getSymbol() == Core.sProcedure) {
+                analyzeProcedureDeclaration();
+            } else {
+                analyzeFunctionDeclaration();
+            }
+            if (token.getSymbol() == Core.sSemicolon) {
+                token = runLexic();
+            } else {
+                // erro, esperado ponto e virgula depois de chamada de funcao/procedimento
+            }
+        }
+
+        if (flag == 1) {
+
+        }
+    }
+
+    private void analyzeFunctionDeclaration() {
+        token = runLexic();
+        if (token.getSymbol() == Core.sIdentifier) {
+            token = runLexic();
+            if (token.getSymbol() == Core.sColon) {
+                token = runLexic();
+                if (token.getSymbol() == Core.sInteger || token.getSymbol() == Core.sBoolean) {
+                    token = runLexic();
+                    if (token.getSymbol() == Core.sSemicolon) {
+                        analyzeBlock();
+                    }
+                } else {
+                    // erro, esperava tipo como inteiro ou booleano
+                }
+            } else {
+                // erro, esperava dois pontos
+            }
+        } else {
+            // erro, esperava identificador
+        }
+    }
+
+    private void analyzeProcedureDeclaration() {
+        token = runLexic();
+        if (token.getSymbol() == Core.sIdentifier) {
+            token = runLexic();
+            if (token.getSymbol() == Core.sSemicolon) {
+                analyzeBlock();
+            } else {
+                // erro, esperava ponto e virgula depois do identificador
+            }
+        } else {
+            // erro, esperava identificador
+        }
     }
 
     private void analyzeVarDeclarations() {
