@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class Core implements Runnable {
+public class Lexic implements Runnable {
 
     private static final String[] arithmeticOperators = { "+", "-", "*" };
     private static final String[] relationalOperators = { "<", ">", "=" };
@@ -55,7 +55,7 @@ public class Core implements Runnable {
     public static final int sIdentifier = 10038;
     public static final int sColon = 10039;
 
-    private static Core instance;
+    private static Lexic instance;
     private File sourceFile;
     private char currentChar;
     private BufferedReader br;
@@ -64,21 +64,28 @@ public class Core implements Runnable {
     private Token token;
     private Syntatic syntatic;
     private boolean firstRun = true;
+    private Thread thread;
+    public int lineNumber = 1;
 
-    private Core() {
+    private Lexic() {
 
     }
 
-    public static Core getInstance() {
+    public static Lexic getInstance() {
         if (instance == null) {
-            instance = new Core();
+            instance = new Lexic();
         }
 
         return instance;
     }
 
+    public Thread getThread() {
+        return thread;
+    }
+
     public void getNextToken() {
-        new Thread(this).start();
+        thread = new Thread(this);
+        thread.start();
     }
 
     @Override
@@ -109,9 +116,12 @@ public class Core implements Runnable {
         try {
             //            while (currentChar != -1) {
             while (currentChar == '{' || currentChar == ' ' ||
-                    currentChar == '\r' || currentChar == '\n' && c != -1) {
+                    currentChar == '\r' || currentChar == '\n' || currentChar == '\t' && c != -1) {
                 if (currentChar == '{') {
                     while (currentChar != '}' && c != -1) {
+                        if (currentChar == '\n') {
+                            lineNumber++;
+                        }
                         c = br.read();
                         currentChar = (char) c;
                     }
@@ -119,7 +129,10 @@ public class Core implements Runnable {
                     currentChar = (char) c;
                 }
 
-                while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' && c != -1) {
+                while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' || currentChar == '\t' && c != -1) {
+                    if (currentChar == '\n') {
+                        lineNumber++;
+                    }
                     c = br.read();
                     currentChar = (char) c;
                 }
@@ -133,6 +146,7 @@ public class Core implements Runnable {
                 } else {
                     bw.write("Erro\n");
                     bw.close();
+                    //                    new CompileErrorException("erro, token nao reconhecido", 0);
                     //System.out.println("eerrrrooo");
                     c = br.read();
                     currentChar = (char) c;
