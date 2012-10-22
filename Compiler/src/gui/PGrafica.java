@@ -100,6 +100,7 @@ public class PGrafica extends javax.swing.JFrame {
                 Lexic c = Lexic.getInstance();
                 c.setSourceFile(currentFile);
                 //                c.startAnalysis();
+                c.setWindow(PGrafica.this);
                 Syntatic s = Syntatic.getInstance();
                 s.setWindow(PGrafica.this);
                 c.setSyntatic(s);
@@ -271,5 +272,9 @@ public class PGrafica extends javax.swing.JFrame {
 
     public JTextArea getCodeArea() {
         return jTextAreaCodigo;
+    }
+
+    public JTextArea getErrorArea() {
+        return jTextAreaErros;
     }
 }

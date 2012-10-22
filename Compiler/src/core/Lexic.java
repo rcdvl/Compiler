@@ -1,5 +1,7 @@
 package core;
 
+import gui.PGrafica;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +10,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 public class Lexic implements Runnable {
 
@@ -66,6 +71,8 @@ public class Lexic implements Runnable {
     private boolean firstRun = true;
     private Thread thread;
     public int lineNumber = 1;
+    public int lastLine = 1;
+    private PGrafica window;
 
     private Lexic() {
 
@@ -120,6 +127,7 @@ public class Lexic implements Runnable {
                 if (currentChar == '{') {
                     while (currentChar != '}' && c != -1) {
                         if (currentChar == '\n') {
+                            lastLine = lineNumber;
                             lineNumber++;
                         }
                         c = br.read();
@@ -131,6 +139,7 @@ public class Lexic implements Runnable {
 
                 while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' || currentChar == '\t' && c != -1) {
                     if (currentChar == '\n') {
+                        lastLine = lineNumber;
                         lineNumber++;
                     }
                     c = br.read();
@@ -154,6 +163,18 @@ public class Lexic implements Runnable {
                 }
             } else {
                 token = new Token(7, "7");
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!CompileErrorException.any) {
+                            JTextArea codeArea = window.getCodeArea();
+                            codeArea.getHighlighter().removeAllHighlights();
+
+                            JTextArea errorArea = window.getErrorArea();
+                            errorArea.setText("Compilado com sucesso.\n");
+                        }
+                    }
+                });
                 bw.write("-------------- fim de uma execucao -------------\n\n");
                 bw.flush();
                 bw.close();
@@ -414,6 +435,10 @@ public class Lexic implements Runnable {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        lineNumber = 1;
+        lastLine = 1;
+        firstRun = true;
+        CompileErrorException.any = false;
     }
 
     public Token getToken() {
@@ -422,5 +447,9 @@ public class Lexic implements Runnable {
 
     public void setSyntatic(Syntatic s) {
         syntatic = s;
+    }
+
+    public void setWindow(PGrafica pGrafica) {
+        window = pGrafica;
     }
 }

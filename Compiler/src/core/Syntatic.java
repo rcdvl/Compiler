@@ -41,6 +41,7 @@ public class Syntatic implements Runnable {
                 token = runLexic();
 
                 if (token.getSymbol() == Lexic.sIdentifier) {
+                    // insere_tabela(token.lexema, "nomedoprograma", "", "")
                     // Lexico(token)
                     token = runLexic();
 
@@ -68,7 +69,7 @@ public class Syntatic implements Runnable {
             } else {
                 throw new CompileErrorException("erro, esperava-se o simbolo programa", lexic.lineNumber);
             }
-        } catch (CompileErrorException cee) {
+        } catch (final CompileErrorException cee) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -76,7 +77,9 @@ public class Syntatic implements Runnable {
                     DefaultHighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
 
                     try {
-                        codeArea.getHighlighter().addHighlight(codeArea.getLineStartOffset(lexic.lineNumber-1), codeArea.getLineEndOffset(lexic.lineNumber-1), painter);
+                        codeArea.getHighlighter().addHighlight(codeArea.getLineStartOffset(lexic.lastLine-1), codeArea.getLineEndOffset(lexic.lastLine-1), painter);
+                        JTextArea errorArea = window.getErrorArea();
+                        errorArea.setText(cee.getMessage());
                     } catch (BadLocationException ex) {
                         ex.printStackTrace();
                     }
@@ -148,12 +151,15 @@ public class Syntatic implements Runnable {
         if (token.getSymbol() == Lexic.sOpenParentheses) {
             token = runLexic();
             if (token.getSymbol() == Lexic.sIdentifier) {
+                // se pesquisa_ declvarfunc_tabela(token.lexema)
+                // então
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sCloseParentheses) {
                     token = runLexic();
                 } else {
                     throw new CompileErrorException("erro, era esperado um fecha parenteses depois do identificador", lexic.lineNumber);
                 }
+                // senao erro
             } else {
                 throw new CompileErrorException("erro, era esperado um identificador depois do abre parenteses", lexic.lineNumber);
             }
@@ -167,12 +173,15 @@ public class Syntatic implements Runnable {
         if (token.getSymbol() == Lexic.sOpenParentheses) {
             token = runLexic();
             if (token.getSymbol() == Lexic.sIdentifier) {
+                // se pesquisa_declvar_tabela(token.lexema)
+                // então início (pesquisa em toda a tabela)
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sCloseParentheses) {
                     token = runLexic();
                 } else {
                     throw new CompileErrorException("erro, era esperado um fecha parenteses", lexic.lineNumber);
                 }
+                // senao erro
             } else {
                 throw new CompileErrorException("erro, era esperado um identificador como parametro do read", lexic.lineNumber);
             }
@@ -239,7 +248,13 @@ public class Syntatic implements Runnable {
 
     private void analyzeFactor() throws CompileErrorException {
         if (token.getSymbol() == Lexic.sIdentifier) {
+            // Se pesquisa_tabela(token.lexema,nível,ind)
+            // Então Se (TabSimb[ind].tipo = “função inteiro”) ou
+            // (TabSimb[ind].tipo = “função booleano”)
+            // Então
             analyzeFunctionCall();
+            // Senão Léxico(token)
+            // Senão ERRO
         } else if (token.getSymbol() == Lexic.sNumber) {
             token = runLexic();
         } else if (token.getSymbol() == Lexic.sNot) {
@@ -312,11 +327,19 @@ public class Syntatic implements Runnable {
 
     private void analyzeFunctionDeclaration() throws CompileErrorException {
         token = runLexic();
+        // nível := 'L' (marca ou novo galho)
         if (token.getSymbol() == Lexic.sIdentifier) {
+            // pesquisa_declfunc_tabela(token.lexema)
+            // se não encontrou
+            // então início
+            //     Insere_tabela(token.lexema,””,nível,rótulo)
             token = runLexic();
             if (token.getSymbol() == Lexic.sColon) {
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sInteger || token.getSymbol() == Lexic.sBoolean) {
+                    // se (token.símbolo = Sinteger)
+                    // então TABSIMB[pc].tipo:= 'função inteiro'
+                    // senão TABSIMB[pc].tipo:= 'função boolean'
                     token = runLexic();
                     if (token.getSymbol() == Lexic.sSemicolon) {
                         analyzeBlock();
@@ -327,21 +350,31 @@ public class Syntatic implements Runnable {
             } else {
                 throw new CompileErrorException("erro, esperava dois pontos", lexic.lineNumber);
             }
+            // senão ERRO
         } else {
+            // DESEMPILHA OU VOLTA NÍVEL
             throw new CompileErrorException("erro, esperava identificador", lexic.lineNumber);
         }
     }
 
     private void analyzeProcedureDeclaration() throws CompileErrorException {
         token = runLexic();
+        // nível := 'L' (marca ou novo galho)
         if (token.getSymbol() == Lexic.sIdentifier) {
+            // pesquisa_declproc_tabela(token.lexema)
+            // se não encontrou
+            // então início
+            // Insere_tabela(token.lexema,”procedimento”,nível, rótulo)
             token = runLexic();
             if (token.getSymbol() == Lexic.sSemicolon) {
                 analyzeBlock();
             } else {
                 throw new CompileErrorException("erro, esperava ponto e virgula depois do identificador", lexic.lineNumber);
             }
+            // fim
+            // senão ERRO
         } else {
+            // DESEMPILHA OU VOLTA NÍVEL
             throw new CompileErrorException("erro, esperava identificador", lexic.lineNumber);
         }
     }
@@ -368,6 +401,10 @@ public class Syntatic implements Runnable {
     private void analyzeVars() throws CompileErrorException {
         do {
             if (token.getSymbol() == Lexic.sIdentifier) {
+                // Pesquisa_duplicvar_ tabela(token.lexema)
+                // se não encontrou duplicidade
+                // então início
+                // insere_tabela(token.lexema, "variável")
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sComma || token.getSymbol() == Lexic.sColon) {
                     if (token.getSymbol() == Lexic.sComma) {
@@ -379,6 +416,8 @@ public class Syntatic implements Runnable {
                 } else {
                     throw new CompileErrorException("erro, esperava-se virgula ou dois pontos", lexic.lineNumber);
                 }
+                // fim
+                // senao erro
             } else {
                 throw new CompileErrorException("erro, esperava-se um identificador", lexic.lineNumber);
             }
@@ -392,7 +431,7 @@ public class Syntatic implements Runnable {
         if (token.getSymbol() != Lexic.sInteger && token.getSymbol() != Lexic.sBoolean) {
             throw new CompileErrorException("erro, esperava-se inteiro ou booleano como tipo", lexic.lineNumber);
         }
-
+        // senao coloca_tipo_tabela(token.lexema)
         token = runLexic();
     }
 
