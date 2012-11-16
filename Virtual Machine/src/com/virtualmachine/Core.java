@@ -161,7 +161,11 @@ public class Core {
 
                 System.out.println("comando: " + commands.get(stepNumber));
 
-                threadProgramCounters.add(programCounter);
+                try {
+                    threadProgramCounters.put(programCounter);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
                 SwingUtilities.invokeLater(new Runnable() {
                     int pc = threadProgramCounters.poll();
                     @Override
@@ -276,9 +280,13 @@ public class Core {
                     printingIO = true;
                     String input = JOptionPane.showInputDialog("Entre com um valor");
                     memory[stackTop] = Integer.valueOf(input);
+                    printingIO = false;
                 } else if (commands.get(stepNumber).equals("PRN")) {
-                    System.out.println("VOU TACAR:" + memory[stackTop]);
-                    memoryStackTops.add(memory[stackTop]);
+                    try {
+                        memoryStackTops.put(memory[stackTop]);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {

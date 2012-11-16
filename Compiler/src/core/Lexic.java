@@ -80,10 +80,14 @@ public class Lexic implements Runnable {
 
     public static Lexic getInstance() {
         if (instance == null) {
-            instance = new Lexic();
+            newInstance();
         }
 
         return instance;
+    }
+    
+    public static void newInstance() {
+    	instance = new Lexic();
     }
 
     public Thread getThread() {

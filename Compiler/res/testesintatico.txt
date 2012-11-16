@@ -64,6 +64,7 @@ fim;
 
 inicio
    i:=0;
+j:=2;
    enquanto i < 3 faca
    inicio
       leia(n); {leitura do valor

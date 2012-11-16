@@ -17,23 +17,39 @@ public class Syntatic implements Runnable {
     private Token token;
     private Thread thread;
     private PGrafica window;
+    private final Semantic semantic;
+    private final CodeGenerator codeGenerator;
+    private int label;
+    private int currentAddress = 0;
+    private int varDeclCount;
+    private String unaryToken;
 
     private Syntatic() {
-
+    	Semantic.newInstance();
+        semantic = Semantic.getInstance();
+        CodeGenerator.newInstance();
+        codeGenerator = CodeGenerator.getInstance();
+        codeGenerator.clearFile();
+        label = 1;
     }
 
     public static Syntatic getInstance() {
         if (instance == null) {
-            instance = new Syntatic();
+        	newInstance();
         }
 
         return instance;
+    }
+    
+    public static void newInstance() {
+    	instance = new Syntatic();
     }
 
     public void analyze() {
         //        do {
         // Lexico(token)
         try {
+            label = 1;
             token = runLexic();
 
             if (token.getSymbol() == Lexic.sProgram) {
@@ -42,6 +58,12 @@ public class Syntatic implements Runnable {
 
                 if (token.getSymbol() == Lexic.sIdentifier) {
                     // insere_tabela(token.lexema, "nomedoprograma", "", "")
+                    SymbolsTableEntry ste = new SymbolsTableEntry();
+                    ste.lexeme = token.getLexeme();
+                    ste.type = SymbolsTableEntry.PROGRAM_NAME_TYPE;
+                    ste.level = SymbolsTableEntry.SCOPE_MARK;
+                    semantic.addSymbolToTable(ste);
+                    codeGenerator.generate("    ", "START", "    ", "    ");
                     // Lexico(token)
                     token = runLexic();
 
@@ -50,6 +72,7 @@ public class Syntatic implements Runnable {
                         if (token.getSymbol() == Lexic.sDot) {
                             // Lexico(token)
                             token = runLexic();
+                            codeGenerator.generate("    ", "HLT", "    ", "    ");
 
                             // se acabou o arquivo ou é comentario
                             if (token.getSymbol() == 7 && token.getLexeme().equals("7")) {
@@ -147,19 +170,30 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeWrite() throws CompileErrorException {
+        int symbolIndex;
         token = runLexic();
         if (token.getSymbol() == Lexic.sOpenParentheses) {
             token = runLexic();
             if (token.getSymbol() == Lexic.sIdentifier) {
                 // se pesquisa_ declvarfunc_tabela(token.lexema)
                 // então
-                token = runLexic();
-                if (token.getSymbol() == Lexic.sCloseParentheses) {
+                if ((symbolIndex = semantic.searchForDeclaration(token.getLexeme())) != -1) {
+                	SymbolsTableEntry ste = semantic.get(symbolIndex);
+                	if (ste.varType != SymbolsTableEntry.VAR_TYPE_INTEGER) {
+                		throw new CompileErrorException("erro semantico, so e possivel escrever variaveis e funcoes inteiras", lexic.lineNumber);
+                	}
+                    codeGenerator.generate("", "LDV", semantic.get(symbolIndex).address, "");
+                    codeGenerator.generate("", "PRN", "", "");
                     token = runLexic();
+                    if (token.getSymbol() == Lexic.sCloseParentheses) {
+                        token = runLexic();
+                    } else {
+                        throw new CompileErrorException("erro, era esperado um fecha parenteses depois do identificador", lexic.lineNumber);
+                    }
                 } else {
-                    throw new CompileErrorException("erro, era esperado um fecha parenteses depois do identificador", lexic.lineNumber);
+                    throw new CompileErrorException("erro semantico, identificador não declarado", lexic.lineNumber);
+                    // senao erro
                 }
-                // senao erro
             } else {
                 throw new CompileErrorException("erro, era esperado um identificador depois do abre parenteses", lexic.lineNumber);
             }
@@ -169,19 +203,30 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeRead() throws CompileErrorException {
+        int symbolIndex;
         token = runLexic();
         if (token.getSymbol() == Lexic.sOpenParentheses) {
             token = runLexic();
             if (token.getSymbol() == Lexic.sIdentifier) {
                 // se pesquisa_declvar_tabela(token.lexema)
                 // então início (pesquisa em toda a tabela)
-                token = runLexic();
-                if (token.getSymbol() == Lexic.sCloseParentheses) {
+                if ((symbolIndex = semantic.searchForDeclaration(token.getLexeme())) != -1) {
+                	SymbolsTableEntry ste = semantic.get(symbolIndex);
+                	if (ste.varType != SymbolsTableEntry.VAR_TYPE_INTEGER) {
+                		throw new CompileErrorException("erro semantico, so e possivel ler variaveis inteiras", lexic.lineNumber);
+                	}
+                    codeGenerator.generate("", "RD", "", "");
+                    codeGenerator.generate("", "STR", semantic.get(symbolIndex).address, "");
                     token = runLexic();
+                    if (token.getSymbol() == Lexic.sCloseParentheses) {
+                        token = runLexic();
+                    } else {
+                        throw new CompileErrorException("erro, era esperado um fecha parenteses", lexic.lineNumber);
+                    }
                 } else {
-                    throw new CompileErrorException("erro, era esperado um fecha parenteses", lexic.lineNumber);
+                    // senao erro
+                    throw new CompileErrorException("erro semantico, identificador nao declarado", lexic.lineNumber);
                 }
-                // senao erro
             } else {
                 throw new CompileErrorException("erro, era esperado um identificador como parametro do read", lexic.lineNumber);
             }
@@ -191,26 +236,59 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeWhile() throws CompileErrorException {
+        int firstLabelAux, secondLabelAux;
+        firstLabelAux = label;
+        System.out.println("null que indica o comeco do while: " + label);
+        codeGenerator.generate(label, "NULL", "    ", "    ");
+        label++;
         token = runLexic();
         analyzeExpression();
+        semantic.analyzeExpression();
+        semantic.clearEquation();
+        if (!semantic.isBooleanExpression) {
+        	throw new CompileErrorException("erro, esperava uma expressao booleana no if", lexic.lineNumber);
+        }
+        
         if (token.getSymbol() == Lexic.sDo) {
+            secondLabelAux = label;
+            System.out.println("jmpf pra sair do while, vai para " + secondLabelAux);
+            codeGenerator.generate("    ", "JMPF", label, "    ");
+            label++;
             token = runLexic();
             analyzeSimpleCommand();
+            System.out.println("jmp pra voltar pro while, vai para " + firstLabelAux);
+            codeGenerator.generate("    ", "JMP ", firstLabelAux, "    ");
+            System.out.println("null pra sair do while, vai para " + secondLabelAux);
+            codeGenerator.generate(secondLabelAux, "NULL", "    ", "    ");
         } else {
-            throw new CompileErrorException("erro, esperava do depois do while", lexic.lineNumber);
+            throw new CompileErrorException("erro, esperava faca depois do enquanto", lexic.lineNumber);
         }
     }
 
     private void analyzeIf() throws CompileErrorException {
+        int labelAux = label;
         token = runLexic();
         analyzeExpression();
+
+        semantic.analyzeExpression();
+        semantic.clearEquation();
+        if (!semantic.isBooleanExpression) {
+        	throw new CompileErrorException("erro, esperava uma expressao booleana no if", lexic.lineNumber);
+        }
+        
+        codeGenerator.generate("", "JMPF", label, "");
+        label++;
         if (token.getSymbol() == Lexic.sThen) {
             token = runLexic();
             analyzeSimpleCommand();
+            codeGenerator.generate("", "JMP", label, "");
             if (token.getSymbol() == Lexic.sElse) {
+                codeGenerator.generate(labelAux, "NULL", "", "");
                 token = runLexic();
                 analyzeSimpleCommand();
             }
+            codeGenerator.generate(label, "NULL", "", "");
+            label++;
         } else {
             throw new CompileErrorException("erro, esperava entao depois do if", lexic.lineNumber);
         }
@@ -221,18 +299,24 @@ public class Syntatic implements Runnable {
         if (token.getSymbol() == Lexic.sGreaterThan || token.getSymbol() == Lexic.sGreaterThanEq ||
                 token.getSymbol() == Lexic.sEquals || token.getSymbol() == Lexic.sLessThan ||
                 token.getSymbol() == Lexic.sLessThanEq || token.getSymbol() == Lexic.sNotEq) {
+            semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeSimpleExpression();
         }
     }
 
     private void analyzeSimpleExpression() throws CompileErrorException {
+        unaryToken = "";
         if (token.getSymbol() == Lexic.sPlus || token.getSymbol() == Lexic.sMinus) {
+            unaryToken = "uinv";
+            //semantic.addToEquation(token.getLexeme());
             token = runLexic();
         }
         analyzeTerm();
 
+        unaryToken = "";
         while (token.getSymbol() == Lexic.sPlus || token.getSymbol() == Lexic.sMinus || token.getSymbol() == Lexic.sOr) {
+            semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeTerm();
         }
@@ -241,6 +325,7 @@ public class Syntatic implements Runnable {
     private void analyzeTerm() throws CompileErrorException {
         analyzeFactor();
         while (token.getSymbol() == Lexic.sTimes || token.getSymbol() == Lexic.sDiv || token.getSymbol() == Lexic.sAnd) {
+            semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeFactor();
         }
@@ -252,23 +337,48 @@ public class Syntatic implements Runnable {
             // Então Se (TabSimb[ind].tipo = “função inteiro”) ou
             // (TabSimb[ind].tipo = “função booleano”)
             // Então
-            analyzeFunctionCall();
+            int index;
+            if ((index = semantic.searchForDeclaration(token.getLexeme())) != -1) {
+                SymbolsTableEntry entry = semantic.get(index);
+                if (entry.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE || entry.type == SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE) {
+                    semantic.addToEquation(token.getLexeme());
+                    analyzeFunctionCall();
+                } else {
+                    semantic.addToEquation(token.getLexeme());
+                    token = runLexic();
+                }
+            } else {
+                throw new CompileErrorException("erro semantico, identificador nao declarado", lexic.lineNumber);
+            }
             // Senão Léxico(token)
             // Senão ERRO
         } else if (token.getSymbol() == Lexic.sNumber) {
+            if (unaryToken.isEmpty()) {
+                semantic.addToEquation(token.getLexeme());
+            } else {
+                semantic.addToEquation(token.getLexeme());
+                semantic.addToEquation(unaryToken);
+            }
             token = runLexic();
         } else if (token.getSymbol() == Lexic.sNot) {
+            semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeFactor();
         } else if (token.getSymbol() == Lexic.sOpenParentheses) {
+            semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeExpression();
             if (token.getSymbol() == Lexic.sCloseParentheses) {
+                semantic.addToEquation(token.getLexeme());
+
+//                semantic.analyzeExpression();
+                //semantic.clearEquation();
                 token = runLexic();
             } else {
                 throw new CompileErrorException("erro, esperava fecha parenteses depois da expressao", lexic.lineNumber);
             }
         } else if (token.getLexeme().equals("verdadeiro") || token.getLexeme().equals("falso")) {
+            semantic.addToEquation(token.getLexeme().equals("verdadeiro") ? "1" : "0");
             token = runLexic();
         } else {
             throw new CompileErrorException("erro, blablbla", lexic.lineNumber);
@@ -276,20 +386,32 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeFunctionCall() throws CompileErrorException {
+    	if (semantic.searchForDeclaration(token.getLexeme()) == -1) {
+            throw new CompileErrorException("erro semantico... funcao nao foi declarada", lexic.lineNumber);
+        }
+        codeGenerator.generate("    ", "CALL ", semantic.searchForDeclaration(token.getLexeme()), "    ");
         token = runLexic();
     }
 
     private void analyzeAttrAndProcCall() throws CompileErrorException {
+        if (semantic.searchForDeclaration(token.getLexeme()) == -1) {
+            throw new CompileErrorException("erro semantico... token nao foi declarado", lexic.lineNumber);
+        }
         Token oldToken = token;
         token = runLexic();
         if (token.getSymbol() == Lexic.sAttribution) {
             analyzeAttribution();
+            codeGenerator.generate("", "STR", semantic.get(semantic.searchForDeclaration(oldToken.getLexeme())).address, "");
         } else {
             analyzeProcedureCall(oldToken);
         }
     }
 
     private void analyzeProcedureCall(Token token) throws CompileErrorException {
+    	if (semantic.searchForDeclaration(token.getLexeme()) == -1) {
+            throw new CompileErrorException("erro semantico... procedimento nao foi declarado", lexic.lineNumber);
+        }
+        codeGenerator.generate("    ", "CALL ", semantic.get(semantic.searchForDeclaration(token.getLexeme())).label, "    ");
         if (token.getSymbol() != Lexic.sIdentifier) {
             throw new CompileErrorException("erro, esperava identificador na chamada do procedimento", lexic.lineNumber);
         }
@@ -299,14 +421,17 @@ public class Syntatic implements Runnable {
         token = runLexic();
 
         analyzeExpression();
+        semantic.analyzeExpression();
+        semantic.clearEquation();
     }
 
     private void analyzeSubRoutines() throws CompileErrorException {
-        int flag = 0;
-        if (token.getSymbol() == Lexic.sProcedure || token.getSymbol() == Lexic.sFunction) {
+        int labelAux;
 
-        }
-
+        labelAux = label;
+        System.out.println("jmp de subrotina, vai para " + label);
+        codeGenerator.generate("    ", "JMP ", label, "    ");
+        label++;
         while (token.getSymbol() == Lexic.sProcedure || token.getSymbol() == Lexic.sFunction) {
             if (token.getSymbol() == Lexic.sProcedure) {
                 analyzeProcedureDeclaration();
@@ -320,63 +445,103 @@ public class Syntatic implements Runnable {
             }
         }
 
-        if (flag == 1) {
-
-        }
+        System.out.println("null de subrotina " + labelAux);
+        codeGenerator.generate(labelAux, "NULL", "    ", "    ");
     }
 
     private void analyzeFunctionDeclaration() throws CompileErrorException {
+        varDeclCount = 0;
         token = runLexic();
-        // nível := 'L' (marca ou novo galho)
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declfunc_tabela(token.lexema)
             // se não encontrou
             // então início
             //     Insere_tabela(token.lexema,””,nível,rótulo)
-            token = runLexic();
-            if (token.getSymbol() == Lexic.sColon) {
+            if (semantic.searchForDeclaration(token.getLexeme()) == -1) {
+                SymbolsTableEntry ste = new SymbolsTableEntry();
+                ste.lexeme = token.getLexeme();
+                ste.type = SymbolsTableEntry.UNDEFINED;
+                ste.level = SymbolsTableEntry.SCOPE_MARK;
+                ste.label = label;
+                ste.address = currentAddress;
+                semantic.addSymbolToTable(ste);
+                // TODO - colocar o endereco da funcao na ste e gerar o null com a label e atualizar a label
+
                 token = runLexic();
-                if (token.getSymbol() == Lexic.sInteger || token.getSymbol() == Lexic.sBoolean) {
-                    // se (token.símbolo = Sinteger)
-                    // então TABSIMB[pc].tipo:= 'função inteiro'
-                    // senão TABSIMB[pc].tipo:= 'função boolean'
+                if (token.getSymbol() == Lexic.sColon) {
                     token = runLexic();
-                    if (token.getSymbol() == Lexic.sSemicolon) {
-                        analyzeBlock();
+                    if (token.getSymbol() == Lexic.sInteger || token.getSymbol() == Lexic.sBoolean) {
+                        // se (token.símbolo = Sinteger)
+                        // então TABSIMB[pc].tipo:= 'função inteiro'
+                        // senão TABSIMB[pc].tipo:= 'função boolean'
+                        if (token.getSymbol() == Lexic.sInteger) {
+                            ste.type = SymbolsTableEntry.INTEGER_FUNCTION_TYPE;
+                        } else {
+                            ste.type = SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE;
+                        }
+
+                        token = runLexic();
+                        if (token.getSymbol() == Lexic.sSemicolon) {
+                            analyzeBlock();
+                        }
+                    } else {
+                        throw new CompileErrorException("erro, esperava tipo como inteiro ou booleano", lexic.lineNumber);
                     }
                 } else {
-                    throw new CompileErrorException("erro, esperava tipo como inteiro ou booleano", lexic.lineNumber);
+                    throw new CompileErrorException("erro, esperava dois pontos", lexic.lineNumber);
                 }
             } else {
-                throw new CompileErrorException("erro, esperava dois pontos", lexic.lineNumber);
+                throw new CompileErrorException("erro semantico, identificador ja declarado", lexic.lineNumber);
+                // senão ERRO
             }
-            // senão ERRO
         } else {
-            // DESEMPILHA OU VOLTA NÍVEL
             throw new CompileErrorException("erro, esperava identificador", lexic.lineNumber);
         }
+
+        // DESEMPILHA OU VOLTA NÍVEL
+        semantic.popUntilScope();
+        currentAddress = currentAddress - varDeclCount;
     }
 
     private void analyzeProcedureDeclaration() throws CompileErrorException {
+        varDeclCount = 0;
         token = runLexic();
-        // nível := 'L' (marca ou novo galho)
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declproc_tabela(token.lexema)
             // se não encontrou
             // então início
             // Insere_tabela(token.lexema,”procedimento”,nível, rótulo)
-            token = runLexic();
-            if (token.getSymbol() == Lexic.sSemicolon) {
-                analyzeBlock();
+            if (semantic.searchForDeclaration(token.getLexeme()) == -1) {
+                SymbolsTableEntry ste = new SymbolsTableEntry();
+                ste.lexeme = token.getLexeme();
+                ste.type = SymbolsTableEntry.PROCEDURE_TYPE;
+                ste.level = SymbolsTableEntry.SCOPE_MARK;
+                ste.label = label;
+                ste.address = currentAddress;
+                semantic.addSymbolToTable(ste);
+
+                System.out.println("label do procedimento que o call vai buscar " + label);
+                codeGenerator.generate(label, "NULL", "    ", "    ");
+                label++;
+
+                token = runLexic();
+                if (token.getSymbol() == Lexic.sSemicolon) {
+                    analyzeBlock();
+                } else {
+                    throw new CompileErrorException("erro, esperava ponto e virgula depois do identificador", lexic.lineNumber);
+                }
             } else {
-                throw new CompileErrorException("erro, esperava ponto e virgula depois do identificador", lexic.lineNumber);
+                // fim
+                // senão ERRO
+                throw new CompileErrorException("erro semantico, identificador não declarado", lexic.lineNumber);
             }
-            // fim
-            // senão ERRO
         } else {
-            // DESEMPILHA OU VOLTA NÍVEL
             throw new CompileErrorException("erro, esperava identificador", lexic.lineNumber);
         }
+        semantic.popUntilScope();
+        codeGenerator.generate("    ", "DALLOC", currentAddress - varDeclCount, varDeclCount);
+        codeGenerator.generate("    ", "RETURN", "    ", "    ");
+        currentAddress = currentAddress - varDeclCount;
     }
 
     private void analyzeVarDeclarations() throws CompileErrorException {
@@ -399,22 +564,37 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeVars() throws CompileErrorException {
+        int varCount = 0;
         do {
             if (token.getSymbol() == Lexic.sIdentifier) {
                 // Pesquisa_duplicvar_ tabela(token.lexema)
                 // se não encontrou duplicidade
                 // então início
                 // insere_tabela(token.lexema, "variável")
-                token = runLexic();
-                if (token.getSymbol() == Lexic.sComma || token.getSymbol() == Lexic.sColon) {
-                    if (token.getSymbol() == Lexic.sComma) {
-                        token = runLexic();
-                        if (token.getSymbol() == Lexic.sColon) {
-                            throw new CompileErrorException("erro, nao e permitido dois pontos depois da virgula?", lexic.lineNumber);
+                if (!semantic.findDuplicateInTable(token.getLexeme())) {
+                    SymbolsTableEntry ste = new SymbolsTableEntry();
+                    ste.lexeme = token.getLexeme();
+                    ste.type = SymbolsTableEntry.VAR_TYPE;
+                    ste.varType = SymbolsTableEntry.UNDEFINED;
+                    ste.address = currentAddress + varCount;
+                    semantic.addSymbolToTable(ste);
+
+                    varCount++;
+                    varDeclCount++;
+
+                    token = runLexic();
+                    if (token.getSymbol() == Lexic.sComma || token.getSymbol() == Lexic.sColon) {
+                        if (token.getSymbol() == Lexic.sComma) {
+                            token = runLexic();
+                            if (token.getSymbol() == Lexic.sColon) {
+                                throw new CompileErrorException("erro, nao e permitido dois pontos depois da virgula?", lexic.lineNumber);
+                            }
                         }
+                    } else {
+                        throw new CompileErrorException("erro, esperava-se virgula ou dois pontos", lexic.lineNumber);
                     }
                 } else {
-                    throw new CompileErrorException("erro, esperava-se virgula ou dois pontos", lexic.lineNumber);
+                    throw new CompileErrorException("erro semantico, identificador duplicado", lexic.lineNumber);
                 }
                 // fim
                 // senao erro
@@ -422,6 +602,8 @@ public class Syntatic implements Runnable {
                 throw new CompileErrorException("erro, esperava-se um identificador", lexic.lineNumber);
             }
         } while (token.getSymbol() != Lexic.sColon);
+        codeGenerator.generate("", "ALLOC ", currentAddress, varCount);
+        currentAddress += varCount;
 
         token = runLexic();
         analyzeType();
@@ -430,8 +612,10 @@ public class Syntatic implements Runnable {
     private void analyzeType() throws CompileErrorException {
         if (token.getSymbol() != Lexic.sInteger && token.getSymbol() != Lexic.sBoolean) {
             throw new CompileErrorException("erro, esperava-se inteiro ou booleano como tipo", lexic.lineNumber);
+        } else {
+            semantic.insertTypeOnVars(token.getLexeme());
+            // senao coloca_tipo_tabela(token.lexema)
         }
-        // senao coloca_tipo_tabela(token.lexema)
         token = runLexic();
     }
 

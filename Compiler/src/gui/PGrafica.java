@@ -97,17 +97,7 @@ public class PGrafica extends javax.swing.JFrame {
         jButtonCompilar.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Lexic c = Lexic.getInstance();
-                c.setSourceFile(currentFile);
-                //                c.startAnalysis();
-                c.setWindow(PGrafica.this);
-                Syntatic s = Syntatic.getInstance();
-                s.setWindow(PGrafica.this);
-                c.setSyntatic(s);
-                s.setCore(c);
-                Thread sThread = new Thread(s);
-                s.setThread(sThread);
-                sThread.start();
+                startCompilation();
             }
         });
 
@@ -276,5 +266,21 @@ public class PGrafica extends javax.swing.JFrame {
 
     public JTextArea getErrorArea() {
         return jTextAreaErros;
+    }
+
+    private void startCompilation() {
+    	Lexic.newInstance();
+        Lexic c = Lexic.getInstance();
+        c.setSourceFile(currentFile);
+        //                c.startAnalysis();
+        c.setWindow(PGrafica.this);
+        Syntatic.newInstance();
+        Syntatic s = Syntatic.getInstance();
+        s.setWindow(PGrafica.this);
+        c.setSyntatic(s);
+        s.setCore(c);
+        Thread sThread = new Thread(s);
+        s.setThread(sThread);
+        sThread.start();
     }
 }

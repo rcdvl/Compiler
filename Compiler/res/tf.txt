@@ -1,0 +1,22 @@
+programa teste;
+
+var int, entrada:inteiro;
+       b:booleano;
+inicio
+   int:= 1 + 4*2+(2*(((4+4))));
+   entrada := 4;
+   b := verdadeiro;
+   escreva(int);
+   leia(entrada);
+   se nao b
+   entao
+     escreva(entrada)
+   senao
+     escreva(int);
+
+   enquanto entrada > 0 faca
+   inicio
+     escreva(entrada);
+     entrada := entrada - 1;
+   fim
+fim.

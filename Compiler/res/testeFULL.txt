@@ -1,0 +1,71 @@
+
+
+programa teste;
+
+var int, entrada:inteiro;
+       b:booleano;
+
+procedimento p4;
+var i:inteiro;
+   procedimento p3;
+   var i:inteiro;
+      procedimento p6;
+      var j:inteiro;
+      inicio
+         j:= 1000 + i + 4;
+         escreva(j);
+      fim;
+   inicio
+      i:= 1000;
+      escreva(i);
+      p6;
+   fim;
+inicio
+   p3;
+   escreva(entrada);
+   i := -2+10-(-2); { tem que dar 10 }
+   escreva(i);
+   i:= i div 2; { 5 }
+   escreva(i);
+   i:= i * (-2); { -10 }
+   escreva(i);
+fim;
+
+inicio
+   int:= 1 + 4;
+   leia(entrada);
+   entrada := entrada + int;
+   escreva(entrada);
+      
+   b := verdadeiro;
+   se nao b
+      entao escreva(entrada)
+   senao
+   inicio
+      entrada := -100;
+      escreva(entrada);
+   fim;
+   enquanto int > 0
+   faca
+   inicio
+      escreva(int);
+      int := int - 1;
+   fim;
+   p4;
+fim.
+
+{ saída
+  entrada + 5
+  -100
+  5
+  4
+  3
+  2
+  1
+  1000
+  2004
+  entrada
+  10
+  5
+  -10
+  }

@@ -92,8 +92,6 @@ public class MainWindow extends javax.swing.JFrame {
         saida.setEditable(false);
         saida.setLineWrap(true);
         saida.setRows(5);
-        saida.setMaximumSize(new java.awt.Dimension(0, 0));
-        saida.setPreferredSize(new java.awt.Dimension(0, 0));
         jScrollPane3.setViewportView(saida);
 
         jLabel1.setText("Código de Máquina");
@@ -243,6 +241,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed
         cod_maq.setRowSelectionAllowed(true);
         if (execucaoCompleta.isSelected()) {
+        	saida.setText("");
             while (!core.isExecutionFinished() && !core.printingIO) {
                 core.runStep();
             }
@@ -295,7 +294,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     /**
      * Populates commands table from an AssemblyFile's attributes (commands i.e).
-     * 
+     *
      * @param af AssemblyFile used to retrieve attributes
      */
     public void populateInterface(AssemblyFile af) {
