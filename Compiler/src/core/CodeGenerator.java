@@ -1,7 +1,6 @@
 package core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -11,6 +10,7 @@ public class CodeGenerator {
     private static CodeGenerator instance = null;
     private final File outputFile;
     private PrintStream writer;
+	private String line;
 
     private CodeGenerator() {
         outputFile = new File(Lexic.getInstance().getSourceFile().getAbsolutePath().split("\\.")[0] + ".obj");
@@ -56,5 +56,22 @@ public class CodeGenerator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void postponeGenerate(String string, String string2, int label,
+			String string3) {
+        line = String.format("%1$-" + 5 + "s", string);
+        line += String.format("%1$-" + 10 + "s", string2);
+        line += String.format("%1$-" + 4 + "s", label);
+        line += String.format("%1$-" + 4 + "s", string3);
+		
+	}
+
+	public void doPostponeGenerate(String string, String string2,
+			int currentAddress, int i) {
+		String args[] = line.split("\\s+");
+		generate(string, string2, currentAddress, i);
+		generate(args[0], args[1], args[2], "");
+		line = "";
 	}
 }

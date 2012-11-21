@@ -20,5 +20,5 @@ public class SymbolsTableEntry {
     public String lexeme;
     public int label;
     public int address;
-
+    public int returnAddress;
 }

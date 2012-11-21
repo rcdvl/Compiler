@@ -2,15 +2,24 @@ programa teste;
 
 var int, entrada:inteiro;
        b:booleano;
+
+funcao a:inteiro;
+inicio
+   a := 1 + 4*2+(2*(((4+4)))) + 1;
+fim;
 inicio
    int:= 1 + 4*2+(2*(((4+4))));
    entrada := 4;
    b := verdadeiro;
    escreva(int);
    leia(entrada);
-   se nao b
+   se b
    entao
-     escreva(entrada)
+   inicio
+     escreva(entrada);
+     int := (a + 1)*2;
+     escreva(int);
+   fim
    senao
      escreva(int);
 
