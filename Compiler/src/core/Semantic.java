@@ -287,7 +287,12 @@ public class Semantic {
                 generator.generate("", "NEG", "", "");
             } else if (searchForDeclaration(symbol) != -1) {
                 // its a var or func
-                generator.generate("", "LDV", symbolsTable.get(searchForDeclaration(symbol)).address, "");
+            	SymbolsTableEntry ste = get(searchForDeclaration(symbol));
+            	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE) {
+            		generator.generate("", "LDV", ste.returnAddress, "");
+            	} else {
+            		generator.generate("", "LDV", ste.address, "");
+            	}
             } else {
                 // its a number
                 generator.generate("", "LDC", symbol, "");

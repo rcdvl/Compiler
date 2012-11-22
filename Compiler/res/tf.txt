@@ -4,8 +4,16 @@ var int, entrada:inteiro;
        b:booleano;
 
 funcao a:inteiro;
+   funcao fe:inteiro;
+      funcao fef:inteiro;
+      inicio
+        fef := 1;
+      fim;
+   inicio
+       fe := fef;
+   fim;
 inicio
-   a := 1 + 4*2+(2*(((4+4)))) + 1;
+   a := 1 + 4*2+(2*(((4+4)))) + fe;
 fim;
 inicio
    int:= 1 + 4*2+(2*(((4+4))));
@@ -29,3 +37,9 @@ inicio
      entrada := entrada - 1;
    fim
 fim.
+{ saida
+   25
+   entrada
+   54
+   entrada....1
+}

@@ -36,7 +36,6 @@ public class CodeGenerator {
         line += String.format("%1$-" + 10 + "s", command.toString());
         line += String.format("%1$-" + 4 + "s", arg1.toString());
         line += String.format("%1$-" + 4 + "s", arg2.toString());
-        System.out.println("gerei -> " + line);
 
         writer.println(line);
         writer.flush();
@@ -70,7 +69,9 @@ public class CodeGenerator {
 	public void doPostponeGenerate(String string, String string2,
 			int currentAddress, int i) {
 		String args[] = line.split("\\s+");
-		generate(string, string2, currentAddress, i);
+		if (string2 != null) {
+			generate(string, string2, currentAddress, i);
+		}
 		generate(args[0], args[1], args[2], "");
 		line = "";
 	}

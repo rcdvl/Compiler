@@ -10,7 +10,6 @@
      JMP       5       
 6    NULL              
      ALLOC     5   1   
-     JMP       7       
 7    NULL              
      LDC       1000    
      LDV       4       
@@ -101,4 +100,5 @@
      JMP       10      
 11   NULL              
      CALL      2       
+     DALLOC    0   3   
      HLT               

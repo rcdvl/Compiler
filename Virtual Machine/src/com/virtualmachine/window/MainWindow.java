@@ -17,6 +17,7 @@ import com.virtualmachine.Core;
 public class MainWindow extends javax.swing.JFrame {
 
     private Core core;
+	private String lastPath = null;
 
     /** Creates new form Interface */
     public MainWindow() {
@@ -256,7 +257,13 @@ public class MainWindow extends javax.swing.JFrame {
         core.reset();
         core.setParenteWindow(this);
         //Create a file chooser
-        final JFileChooser fc = new JFileChooser("./sample");
+
+        final JFileChooser fc;
+        if (lastPath != null) {
+        	fc = new JFileChooser(lastPath);
+        } else {
+        	fc = new JFileChooser("./sample");
+        }
 
         //In response to a button click:
         int returnVal = fc.showOpenDialog(this);
@@ -264,6 +271,7 @@ public class MainWindow extends javax.swing.JFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
 
+            lastPath = file.getAbsolutePath();
             core.setCurrentAssembly(new AssemblyFile(file.getAbsolutePath()));
             //This is where a real application would open the file.
             populateInterface(core.getCurrentAssembly());

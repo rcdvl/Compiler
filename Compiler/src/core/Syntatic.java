@@ -185,6 +185,8 @@ public class Syntatic implements Runnable {
                 	}
                 	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE) {
                 		analyzeFunctionCall();
+                		System.out.println("RETURN ADDRESS DA " + ste.label + ": " + ste.returnAddress);
+                        codeGenerator.generate("", "LDV", ste.returnAddress, "");
 	                    codeGenerator.generate("", "PRN", "", "");
                 	} else {
 	                    codeGenerator.generate("", "LDV", semantic.get(symbolIndex).address, "");
@@ -398,7 +400,6 @@ public class Syntatic implements Runnable {
 
     	SymbolsTableEntry ste = semantic.get(semantic.searchForDeclaration(token.getLexeme()));
         codeGenerator.generate("    ", "CALL ", ste.label, "    ");
-        codeGenerator.generate("", "LDV", ste.returnAddress, "");
         token = runLexic();
     }
 
@@ -413,6 +414,7 @@ public class Syntatic implements Runnable {
             
 	        SymbolsTableEntry ste = semantic.get(semantic.searchForDeclaration(oldToken.getLexeme()));
 	        if (ste.level == SymbolsTableEntry.SCOPE_MARK && semantic.getCurrentScope().equals(oldToken.getLexeme())) {
+        		System.out.println("RETURN ADDRESS DA " + ste.label + ": " + ste.returnAddress);
 	        	codeGenerator.generate("", "STR", ste.returnAddress, "");
 	        } else {
 	        	codeGenerator.generate("", "STR", semantic.get(semantic.searchForDeclaration(oldToken.getLexeme())).address, "");
@@ -450,10 +452,11 @@ public class Syntatic implements Runnable {
         label++;
         while (token.getSymbol() == Lexic.sProcedure || token.getSymbol() == Lexic.sFunction) {
             if (token.getSymbol() == Lexic.sProcedure) {
+                codeGenerator.doPostponeGenerate(null, null, -1, 1);
                 analyzeProcedureDeclaration();
             } else {
                 codeGenerator.doPostponeGenerate("", "ALLOC ", currentAddress, 1);
-                currentAddress += 1;
+                currentAddress++;
                 analyzeFunctionDeclaration(currentAddress - 1);
             }
             if (token.getSymbol() == Lexic.sSemicolon) {
