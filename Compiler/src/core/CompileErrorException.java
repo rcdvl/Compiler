@@ -8,7 +8,6 @@ public class CompileErrorException extends Exception {
     public CompileErrorException(String message, int line) {
         super(message);
         this.line = line;
-        System.out.println(message + " === " + line );
         any = true;
     }
 

@@ -101,9 +101,12 @@ public class Syntatic implements Runnable {
                     DefaultHighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
 
                     try {
-                        codeArea.getHighlighter().addHighlight(codeArea.getLineStartOffset(lexic.lastLine-1), codeArea.getLineEndOffset(lexic.lastLine-1), painter);
+                        codeArea.getHighlighter().addHighlight(codeArea.getLineStartOffset(lexic.lastLine-2), codeArea.getLineEndOffset(lexic.lastLine-2), painter);
                         JTextArea errorArea = window.getErrorArea();
                         errorArea.setText(cee.getMessage());
+                        codeArea.requestFocus();
+                        codeArea.setCaretPosition(codeArea.getDocument().getDefaultRootElement().getElement(lexic.lastLine-2).getStartOffset());
+                    	window.jLabelCompilar.setText("Ocorreram erros na compilacao.");
                     } catch (BadLocationException ex) {
                         ex.printStackTrace();
                     }
@@ -458,6 +461,7 @@ public class Syntatic implements Runnable {
                 codeGenerator.doPostponeGenerate("", "ALLOC ", currentAddress, 1);
                 currentAddress++;
                 analyzeFunctionDeclaration(currentAddress - 1);
+                varDeclCount = 1;
             }
             if (token.getSymbol() == Lexic.sSemicolon) {
                 token = runLexic();

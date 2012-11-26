@@ -288,7 +288,7 @@ public class Semantic {
             } else if (searchForDeclaration(symbol) != -1) {
                 // its a var or func
             	SymbolsTableEntry ste = get(searchForDeclaration(symbol));
-            	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE) {
+            	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE || ste.type == SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE) {
             		generator.generate("", "LDV", ste.returnAddress, "");
             	} else {
             		generator.generate("", "LDV", ste.address, "");
@@ -305,7 +305,7 @@ public class Semantic {
         	isBooleanExpression = true;
         } else if ((index = searchForDeclaration(lastElement)) != -1) {
         	SymbolsTableEntry ste = symbolsTable.get(index);
-        	if (ste.varType == SymbolsTableEntry.VAR_TYPE_BOOLEAN) {
+        	if (ste.varType == SymbolsTableEntry.VAR_TYPE_BOOLEAN || ste.type == SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE) {
         		isBooleanExpression = true;
         	}
         }

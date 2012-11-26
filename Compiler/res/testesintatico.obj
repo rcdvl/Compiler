@@ -1,9 +1,263 @@
      START             
      ALLOC     0   1   
-     ALLOC     0   1   
-     ALLOC     0   3   
-     ALLOC     0   1   
+     ALLOC     1   1   
+     ALLOC     2   3   
+     ALLOC     5   1   
+     ALLOC     6   1   
      JMP       1       
-     ALLOC     0   1   
-     JMP       2       
 2    NULL              
+     ALLOC     7   1   
+3    NULL              
+     LDV       2       
+     LDC       0       
+     CMEQ              
+     JMPF      4       
+     LDC       1       
+     STR       6       
+     JMP       5       
+4    NULL              
+     LDV       2       
+     STR       7       
+     LDV       2       
+     LDC       1       
+     SUB               
+     STR       2       
+     CALL      2       
+     LDV       7       
+     LDV       6       
+     MULT              
+     STR       6       
+5    NULL              
+     DALLOC    7   1   
+     RETURN            
+     ALLOC     7   1   
+     JMP       3       
+6    NULL              
+     ALLOC     8   1   
+     JMP       7       
+8    NULL              
+     ALLOC     9   1   
+     ALLOC     10  1   
+     JMP       9       
+10   NULL              
+     ALLOC     11  1   
+11   NULL              
+     LDV       5       
+     LDC       1       
+     ADD               
+     STR       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     ADD               
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     SUB               
+     STR       11      
+     LDV       11      
+     STR       10      
+     DALLOC    11  1   
+     RETURN            
+9    NULL              
+     LDV       5       
+     LDC       1       
+     ADD               
+     STR       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     ADD               
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     SUB               
+     STR       9       
+     CALL      10      
+     LDV       10      
+     STR       5       
+     DALLOC    10  1   
+     RETURN            
+7    NULL              
+     LDV       5       
+     LDC       1       
+     ADD               
+     STR       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     ADD               
+     LDV       5       
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     SUB               
+     LDV       5       
+     LDV       5       
+     LDC       10      
+     DIVI              
+     MULT              
+     LDV       5       
+     LDC       10      
+     MULT              
+     DIVI              
+     ADD               
+     SUB               
+     STR       8       
+     LDV       5       
+     LDC       10      
+     CME               
+     JMPF      12      
+     CALL      8       
+     JMP       13      
+13   NULL              
+     LDC       1       
+     STR       7       
+     DALLOC    9   1   
+     RETURN            
+     JMP       11      
+14   NULL              
+     ALLOC     9   1   
+15   NULL              
+     LDC       0       
+     STR       9       
+     LDV       9       
+     STR       5       
+     LDC       8       
+     STR       9       
+     LDV       5       
+     PRN               
+     CALL      6       
+     LDV       7       
+     JMPF      16      
+     LDV       9       
+     PRN               
+     JMP       17      
+17   NULL              
+     DALLOC    9   1   
+     RETURN            
+1    NULL              
+     LDC       0       
+     STR       3       
+     LDC       2       
+     STR       4       
+18   NULL              
+     LDV       3       
+     LDC       3       
+     CME               
+     JMPF      19      
+     RD                
+     STR       2       
+     LDV       3       
+     LDC       1       
+     ADD               
+     STR       3       
+     CALL      2       
+     LDV       6       
+     STR       4       
+     LDV       4       
+     PRN               
+     JMP       18      
+19   NULL              
+     CALL      14      
+     DALLOC    0   9   
+     HLT               

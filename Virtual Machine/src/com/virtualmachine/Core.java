@@ -31,10 +31,14 @@ public class Core {
     private boolean executionFinished;
     public boolean printingIO;
 
-    private MainWindow parentWindow;
+    public synchronized boolean isPrintingIO() {
+		return printingIO;
+	}
 
-    private final ArrayBlockingQueue<Integer> threadProgramCounters = new ArrayBlockingQueue<Integer>(3);
-    private final ArrayBlockingQueue<Integer> memoryStackTops = new ArrayBlockingQueue<Integer>(3);
+	private MainWindow parentWindow;
+
+    private final ArrayBlockingQueue<Integer> threadProgramCounters = new ArrayBlockingQueue<Integer>(1);
+    private final ArrayBlockingQueue<Integer> memoryStackTops = new ArrayBlockingQueue<Integer>(1);
 
     private Core() {
         memory = new int[LIST_SIZE];
@@ -138,203 +142,211 @@ public class Core {
      * <p>RETURN (Retornar de procedimento):
      * 		<ul><li>i:=M[s]; s:=s - 1</li></ul></p>
      */
-    public void runStep() {
-        if (executionFinished) {
-            programCounter = 0;
-        }
-
-        threadsExecutor.submit(new Thread(new InstructionRunner()));
+    public synchronized void runStep() {
+        threadsExecutor.execute(new InstructionRunner());
     }
 
     public class InstructionRunner implements Runnable {
         @Override
         public void run() {
+        	if (executionFinished) {
+        		threadsExecutor.shutdownNow();
+        		return;
+        	}
+            int stepNumber = programCounter;
 
-            synchronized (core) {
+            LinkedList<String> commands = currentAssembly.getCommands();
+            LinkedList<String> firstAttributes = currentAssembly.getFirstAttributes();
+            LinkedList<String> secondAttributes = currentAssembly.getSecondAttributes();
+            LinkedList<String> identifiers = currentAssembly.getIdentifiers();
+
+            System.out.println("comando: " + commands.get(stepNumber));
+
+            try {
+                threadProgramCounters.put(programCounter);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            try {
+				SwingUtilities.invokeLater(new Runnable() {
+				    int pc = threadProgramCounters.take();
+				    @Override
+				    public void run() {
+				        parentWindow.cod_maq.setRowSelectionInterval(pc, pc);
+				        parentWindow.cod_maq.scrollRectToVisible(new Rectangle(
+				                parentWindow.cod_maq.getCellRect(pc, 0, true)));
+				    }
+				});
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+
+            if (commands.get(stepNumber).equals("LDC")) {
+                stackTop += 1;
+                memory[stackTop] = Integer.parseInt(firstAttributes.get(stepNumber));
+            } else if (commands.get(stepNumber).equals("LDV")) {
+                stackTop += 1;
+                memory[stackTop] = memory[Integer.parseInt(firstAttributes.get(stepNumber))];
+            } else if (commands.get(stepNumber).equals("ADD")) {
+                memory[stackTop - 1] = memory[stackTop - 1] + memory[stackTop];
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("SUB")) {
+                memory[stackTop - 1] = memory[stackTop - 1] - memory[stackTop];
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("MULT")) {
+                memory[stackTop - 1] = memory[stackTop - 1] * memory[stackTop];
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("DIVI")) {
+                memory[stackTop - 1] = memory[stackTop - 1] / memory[stackTop];
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("INV")) {
+                memory[stackTop] = memory[stackTop] - (memory[stackTop] * 2);
+            } else if (commands.get(stepNumber).equals("AND")) {
+                if (memory[stackTop - 1] == 1 && memory[stackTop] == 1) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("OR")) {
+                if (memory[stackTop - 1] == 1 || memory[stackTop] == 1) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("NEG")) {
+                memory[stackTop] = 1 - memory[stackTop];
+            } else if (commands.get(stepNumber).equals("CME")) {
+                if (memory[stackTop - 1] < memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("CMA")) {
+                if (memory[stackTop - 1] > memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("CEQ")) {
+                if (memory[stackTop - 1] == memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("CDIF")) {
+                if (memory[stackTop - 1] != memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("CMEQ")) {
+                if (memory[stackTop - 1] <= memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("CMAQ")) {
+                if (memory[stackTop - 1] >= memory[stackTop]) {
+                    memory[stackTop - 1] = 1;
+                } else {
+                    memory[stackTop - 1] = 0;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("START")) {
+                stackTop = -1;
+            } else if (commands.get(stepNumber).equals("HLT")) {
+                executionFinished = true;
+                JOptionPane.showMessageDialog(parentWindow, "Fim da execução");
+                printingIO = true;
+            } else if (commands.get(stepNumber).equals("STR")) {
+                memory[Integer.valueOf(firstAttributes.get(stepNumber))] = memory[stackTop];
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("JMP")) {
+                programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
+                return;
+            } else if (commands.get(stepNumber).equals("JMPF")) {
+                if (memory[stackTop] == 0) {
+                    programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
+                    stackTop -= 1;
+                    return;
+                }
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("NULL")) {
+                ;
+            } else if (commands.get(stepNumber).equals("RD")) {
+                stackTop += 1;
+                printingIO = true;
+                String input = JOptionPane.showInputDialog("Entre com um valor");
+                memory[stackTop] = Integer.valueOf(input);
                 printingIO = false;
-                int stepNumber = programCounter;
-
-                LinkedList<String> commands = currentAssembly.getCommands();
-                LinkedList<String> firstAttributes = currentAssembly.getFirstAttributes();
-                LinkedList<String> secondAttributes = currentAssembly.getSecondAttributes();
-                LinkedList<String> identifiers = currentAssembly.getIdentifiers();
-
-                System.out.println("comando: " + commands.get(stepNumber));
-
+            } else if (commands.get(stepNumber).equals("PRN")) {
                 try {
-                    threadProgramCounters.put(programCounter);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
+                    memoryStackTops.put(memory[stackTop]);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    int pc = threadProgramCounters.poll();
-                    @Override
-                    public void run() {
-                        parentWindow.cod_maq.setRowSelectionInterval(pc, pc);
-                        parentWindow.cod_maq.scrollRectToVisible(new Rectangle(
-                                parentWindow.cod_maq.getCellRect(pc, 0, true)));
-                    }
-                });
-
-                if (commands.get(stepNumber).equals("LDC")) {
-                    stackTop += 1;
-                    memory[stackTop] = Integer.parseInt(firstAttributes.get(stepNumber));
-                } else if (commands.get(stepNumber).equals("LDV")) {
-                    stackTop += 1;
-                    memory[stackTop] = memory[Integer.parseInt(firstAttributes.get(stepNumber))];
-                } else if (commands.get(stepNumber).equals("ADD")) {
-                    memory[stackTop - 1] = memory[stackTop - 1] + memory[stackTop];
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("SUB")) {
-                    memory[stackTop - 1] = memory[stackTop - 1] - memory[stackTop];
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("MULT")) {
-                    memory[stackTop - 1] = memory[stackTop - 1] * memory[stackTop];
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("DIVI")) {
-                    memory[stackTop - 1] = memory[stackTop - 1] / memory[stackTop];
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("INV")) {
-                    memory[stackTop] = memory[stackTop] - (memory[stackTop] * 2);
-                } else if (commands.get(stepNumber).equals("AND")) {
-                    if (memory[stackTop - 1] == 1 && memory[stackTop] == 1) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("OR")) {
-                    if (memory[stackTop - 1] == 1 || memory[stackTop] == 1) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("NEG")) {
-                    memory[stackTop] = 1 - memory[stackTop];
-                } else if (commands.get(stepNumber).equals("CME")) {
-                    if (memory[stackTop - 1] < memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("CMA")) {
-                    if (memory[stackTop - 1] > memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("CEQ")) {
-                    if (memory[stackTop - 1] == memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("CDIF")) {
-                    if (memory[stackTop - 1] != memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("CMEQ")) {
-                    if (memory[stackTop - 1] <= memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("CMAQ")) {
-                    if (memory[stackTop - 1] >= memory[stackTop]) {
-                        memory[stackTop - 1] = 1;
-                    } else {
-                        memory[stackTop - 1] = 0;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("START")) {
-                    stackTop = -1;
-                } else if (commands.get(stepNumber).equals("HLT")) {
-                    executionFinished = true;
-                    JOptionPane.showMessageDialog(parentWindow, "Fim da execução");
-                    printingIO = true;
-                } else if (commands.get(stepNumber).equals("STR")) {
-                    memory[Integer.valueOf(firstAttributes.get(stepNumber))] = memory[stackTop];
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("JMP")) {
-                    programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
-                    return;
-                } else if (commands.get(stepNumber).equals("JMPF")) {
-                    if (memory[stackTop] == 0) {
-                        programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
-                        stackTop -= 1;
-                        return;
-                    }
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("NULL")) {
-                    ;
-                } else if (commands.get(stepNumber).equals("RD")) {
-                    stackTop += 1;
-                    printingIO = true;
-                    String input = JOptionPane.showInputDialog("Entre com um valor");
-                    memory[stackTop] = Integer.valueOf(input);
-                    printingIO = false;
-                } else if (commands.get(stepNumber).equals("PRN")) {
-                    try {
-                        memoryStackTops.put(memory[stackTop]);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            parentWindow.saida.append(memoryStackTops.poll() + "\n");
-                        }
-                    });
-                    stackTop -= 1;
-                } else if (commands.get(stepNumber).equals("ALLOC")) {
-                    int m = Integer.valueOf(firstAttributes.get(stepNumber)), n = Integer.valueOf(secondAttributes.get(stepNumber));
-
-                    for (int i = 0; i < n; i++) {
-                        stackTop += 1;
-                        memory[stackTop] = memory[m + i];
-                    }
-                } else if (commands.get(stepNumber).equals("DALLOC")) {
-                    int m = Integer.valueOf(firstAttributes.get(stepNumber)), n = Integer.valueOf(secondAttributes.get(stepNumber));
-
-                    for (int i = n - 1; i >= 0; i--) {
-                        memory[m + i] = memory[stackTop];
-                        stackTop -= 1;
-                    }
-                } else if (commands.get(stepNumber).equals("CALL")) {
-                    stackTop += 1;
-                    memory[stackTop] = programCounter + 1;
-                    programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
-                    return;
-                } else if (commands.get(stepNumber).equals("RETURN")) {
-                    programCounter = memory[stackTop];
-                    stackTop -= 1;
-                    return;
-                }
-
-                programCounter += 1;
-
-                //System.out.println(Arrays.toString(memory));
-
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        DefaultTableModel dtm = (DefaultTableModel) parentWindow.memoria.getModel();
-                        dtm.getDataVector().removeAllElements();
-                        for (int i=0; i<stackTop + 1; i++) {
-                            dtm.addRow(new String[] {String.valueOf(i), String.valueOf(memory[i])});
-                        }
+                        try {
+							parentWindow.saida.append(memoryStackTops.take() + "\n");
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
                     }
                 });
+                stackTop -= 1;
+            } else if (commands.get(stepNumber).equals("ALLOC")) {
+                int m = Integer.valueOf(firstAttributes.get(stepNumber)), n = Integer.valueOf(secondAttributes.get(stepNumber));
+
+                for (int i = 0; i < n; i++) {
+                    stackTop += 1;
+                    memory[stackTop] = memory[m + i];
+                }
+            } else if (commands.get(stepNumber).equals("DALLOC")) {
+                int m = Integer.valueOf(firstAttributes.get(stepNumber)), n = Integer.valueOf(secondAttributes.get(stepNumber));
+
+                for (int i = n - 1; i >= 0; i--) {
+                    memory[m + i] = memory[stackTop];
+                    stackTop -= 1;
+                }
+            } else if (commands.get(stepNumber).equals("CALL")) {
+                stackTop += 1;
+                memory[stackTop] = programCounter + 1;
+                programCounter = Integer.valueOf(identifiers.indexOf(firstAttributes.get(stepNumber)));
+                return;
+            } else if (commands.get(stepNumber).equals("RETURN")) {
+                programCounter = memory[stackTop];
+                stackTop -= 1;
+                return;
             }
 
+            programCounter += 1;
+
+            //System.out.println(Arrays.toString(memory));
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    DefaultTableModel dtm = (DefaultTableModel) parentWindow.memoria.getModel();
+                    dtm.getDataVector().removeAllElements();
+                    for (int i=0; i<stackTop + 1; i++) {
+                        dtm.addRow(new String[] {String.valueOf(i), String.valueOf(memory[i])});
+                    }
+                }
+            });
+
+            printingIO = false;
+            synchronized (parentWindow) {
+            	parentWindow.notify();
+            }
         }
     }
 

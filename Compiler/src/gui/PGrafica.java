@@ -42,7 +42,6 @@ public class PGrafica extends javax.swing.JFrame {
         jTextFieldArquivo = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaCodigo = new javax.swing.JTextArea();
-        jLabelLinhaColuna = new javax.swing.JLabel();
         jLabelErros = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaErros = new javax.swing.JTextArea();
@@ -85,11 +84,9 @@ public class PGrafica extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTextAreaCodigo);
 
-        jLabelLinhaColuna.setText("Linhas, Colunas");
-
         jLabelErros.setText("Erros:");
 
-        jTextAreaErros.setColumns(20);
+        jTextAreaErros.setColumns(55);
         jTextAreaErros.setRows(5);
         jScrollPane2.setViewportView(jTextAreaErros);
 
@@ -101,7 +98,7 @@ public class PGrafica extends javax.swing.JFrame {
             }
         });
 
-        jLabelCompilar.setText("jLabel2");
+        jLabelCompilar.setText("");
 
         jMenuArquivo.setText("Arquivo");
 
@@ -176,12 +173,11 @@ public class PGrafica extends javax.swing.JFrame {
                                         .addComponent(jLabelArquivo)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jLabelLinhaColuna, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabelErros)
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 694, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(99, 99, 99)
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jButtonCompilar)
                                                         .addComponent(jLabelCompilar))))
@@ -196,8 +192,6 @@ public class PGrafica extends javax.swing.JFrame {
                                 .addComponent(jTextFieldArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabelLinhaColuna)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabelErros)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -229,6 +223,7 @@ public class PGrafica extends javax.swing.JFrame {
                 br.close();
 
                 setTitle(currentFile.getAbsolutePath());
+                jButtonCompilar.requestFocus();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -242,9 +237,8 @@ public class PGrafica extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCompilar;
     private javax.swing.JLabel jLabelArquivo;
-    private javax.swing.JLabel jLabelCompilar;
+    public javax.swing.JLabel jLabelCompilar;
     private javax.swing.JLabel jLabelErros;
-    private javax.swing.JLabel jLabelLinhaColuna;
     private javax.swing.JMenu jMenuArquivo;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemAbrir;

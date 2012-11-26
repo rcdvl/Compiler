@@ -1,9 +1,12 @@
 package com.virtualmachine.window;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.JFileChooser;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 
 import com.virtualmachine.AssemblyFile;
@@ -39,10 +42,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         execucaoPAP = new javax.swing.JRadioButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        execLog = new javax.swing.JTextArea();
         execucaoCompleta = new javax.swing.JRadioButton();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         menu = new javax.swing.JMenuBar();
         arquivo = new javax.swing.JMenu();
@@ -104,16 +104,9 @@ public class MainWindow extends javax.swing.JFrame {
         buttonGroup1.add(execucaoPAP);
         execucaoPAP.setText("Passo-a-passo");
 
-        execLog.setColumns(20);
-        execLog.setEditable(false);
-        execLog.setRows(5);
-        jScrollPane4.setViewportView(execLog);
-
         buttonGroup1.add(execucaoCompleta);
         execucaoCompleta.setSelected(true);
         execucaoCompleta.setText("Completo");
-
-        jLabel4.setText("Log de execução");
 
         jLabel5.setText("Execução");
 
@@ -126,6 +119,7 @@ public class MainWindow extends javax.swing.JFrame {
                 abrirActionPerformed(evt);
             }
         });
+        abrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         arquivo.add(abrir);
 
         fechar.setText("Fechar");
@@ -144,6 +138,7 @@ public class MainWindow extends javax.swing.JFrame {
                 sairActionPerformed(evt);
             }
         });
+        sair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
         arquivo.add(sair);
 
         menu.add(arquivo);
@@ -185,9 +180,7 @@ public class MainWindow extends javax.swing.JFrame {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addComponent(jLabel4)
-                                                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING))
                                                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                                                 .addGroup(layout.createSequentialGroup()
@@ -221,8 +214,7 @@ public class MainWindow extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                 .addComponent(jLabel3)
-                                                .addComponent(jLabel5)
-                                                .addComponent(jLabel4))
+                                                .addComponent(jLabel5))
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                                                         .addGroup(layout.createSequentialGroup()
@@ -231,8 +223,7 @@ public class MainWindow extends javax.swing.JFrame {
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                                 .addComponent(execucaoPAP)
                                                                 .addGap(18, 18, 18)
-                                                                .addComponent(executar))
-                                                                .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                                                                .addComponent(executar)))
                                                                 .addGap(32, 32, 32))
                 );
 
@@ -241,21 +232,34 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed
         cod_maq.setRowSelectionAllowed(true);
-        if (execucaoCompleta.isSelected()) {
-        	saida.setText("");
-            while (!core.isExecutionFinished() && !core.printingIO) {
-                core.runStep();
-            }
-        } else {
-            core.runStep();
+        if(core.isExecutionFinished()) {
+        	resetEverything();
+            core.setCurrentAssembly(new AssemblyFile(lastPath));
         }
+        
+        new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+		        if (execucaoCompleta.isSelected()) {
+		        	saida.setText("");
+		            while (!core.isExecutionFinished()) {
+		            	if (!core.isPrintingIO()) {
+		            		core.runStep();
+			            	System.out.println("to mandando");
+		            	}
+		            }
+		            System.out.println("fim de execucao");
+		        } else {
+		            core.runStep();
+		        }	
+			}
+		}).start();
 
     }//GEN-LAST:event_executarActionPerformed
 
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
-        core = Core.getInstance();
-        core.reset();
-        core.setParenteWindow(this);
+    	resetEverything();
         //Create a file chooser
 
         final JFileChooser fc;
@@ -272,9 +276,10 @@ public class MainWindow extends javax.swing.JFrame {
             File file = fc.getSelectedFile();
 
             lastPath = file.getAbsolutePath();
-            core.setCurrentAssembly(new AssemblyFile(file.getAbsolutePath()));
+            core.setCurrentAssembly(new AssemblyFile(lastPath));
             //This is where a real application would open the file.
             populateInterface(core.getCurrentAssembly());
+            executar.requestFocus();
             //        	log.append("Opening: " + file.getName() + "." + newline);
         } else {
             //        	log.append("Open command cancelled by user." + newline);
@@ -318,7 +323,19 @@ public class MainWindow extends javax.swing.JFrame {
             for (int i=0; i < commands.size(); i++) {
                 dtm.addRow(new String[]{String.valueOf(i), identifiers.get(i), commands.get(i), firstAttributes.get(i), secondAttributes.get(i)});
             }
+            
+            dtm = (DefaultTableModel) memoria.getModel();
+            dtm.getDataVector().removeAllElements();
         }
+    }
+    
+    public void resetEverything() {
+        core = Core.getInstance();
+        AssemblyFile af = core.getCurrentAssembly();
+        core.reset();
+        core.setParenteWindow(this);
+        core.setCurrentAssembly(af);
+        populateInterface(core.getCurrentAssembly());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -328,7 +345,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     public javax.swing.JTable cod_maq;
     private javax.swing.JMenuItem comandos;
-    private javax.swing.JTextArea execLog;
     private javax.swing.JRadioButton execucaoCompleta;
     private javax.swing.JRadioButton execucaoPAP;
     private javax.swing.JButton executar;
@@ -336,12 +352,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     public javax.swing.JTable memoria;
     private javax.swing.JMenuBar menu;
     public javax.swing.JTextArea saida;

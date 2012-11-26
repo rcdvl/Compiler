@@ -131,7 +131,6 @@ public class Lexic implements Runnable {
                 if (currentChar == '{') {
                     while (currentChar != '}' && c != -1) {
                         if (currentChar == '\n') {
-                            lastLine = lineNumber;
                             lineNumber++;
                         }
                         c = br.read();
@@ -143,7 +142,7 @@ public class Lexic implements Runnable {
 
                 while (currentChar == ' ' || currentChar == '\r' || currentChar == '\n' || currentChar == '\t' && c != -1) {
                     if (currentChar == '\n') {
-                        lastLine = lineNumber;
+                        lastLine++;
                         lineNumber++;
                     }
                     c = br.read();
@@ -174,8 +173,8 @@ public class Lexic implements Runnable {
                             JTextArea codeArea = window.getCodeArea();
                             codeArea.getHighlighter().removeAllHighlights();
 
-                            JTextArea errorArea = window.getErrorArea();
-                            errorArea.setText("Compilado com sucesso.\n");
+                            window.jLabelCompilar.setText("Compilado com sucesso.");
+                            window.getErrorArea().setText("");
                         }
                     }
                 });
