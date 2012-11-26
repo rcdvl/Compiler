@@ -1,0 +1,254 @@
+{Muitas das variaveis nao foram usadas, porém foram criadas para ver o comportamento da VM}
+
+{	saida esperada, necessariamente nessa ordem
+
+	720 -  fatorial de 6
+	(-3462) - valor da expressão em chamandoNoEnquantoDaFuncaoBooleana
+	4 - resultado de ackerman (2,1)
+	3 - n de ackerman (valor da variavel m)
+	55 - soma de 10 até 0
+	25 -  125 / 5
+	1 - Resultado de contaMaluca
+}
+programa testandoMemo;
+	var num, den,gd,dfs,ewq,fs,ew2q,das, retornoChamandoNoEnquantoDaFuncaoBooleana, vezesQueEntrou:inteiro;
+	pChamandoNoEnquantoDaFuncaoBooleana:booleano;
+
+	procedimento chamandoNoEnquantoDaFuncaoBooleana;
+	inicio	
+
+		se pChamandoNoEnquantoDaFuncaoBooleana entao
+
+			inicio
+				retornoChamandoNoEnquantoDaFuncaoBooleana:=
+				(2+3*(1000 div 452 * 256 * 256) - (-568*(-41))) 
+					div (5 + 3 + (-3) * (5+10 * 100 div 10)) -
+					(1+2+3-(-(526 div 123 * 563)));
+		
+				
+			fim
+		senao
+			inicio 
+				
+				retornoChamandoNoEnquantoDaFuncaoBooleana:=4;
+			fim;
+
+		
+
+	fim;
+
+	procedimento pInicio;
+		var nFat, fatResult, stopFuncaoBooleana:inteiro;
+			p2stopFuncaoBooleana :booleano;
+
+		procedimento fat;
+			var aux:inteiro;
+		inicio { inicio fat }
+			se nFat = 0 entao fatResult := 1
+			senao
+			inicio					
+				aux:= nFat;
+				nFat := nFat - 1;
+				fat;
+				fatResult := fatResult * aux;
+				
+			fim
+		fim; {fim fat}
+
+		funcao funcaoBooleana :booleano; {subtrai stopFuncaoBooleana recursivamente}
+			
+		inicio
+			
+			se stopFuncaoBooleana = 0 entao  
+			inicio
+				se p2stopFuncaoBooleana entao
+					funcaoBooleana :=falso
+				senao
+					funcaoBooleana :=verdadeiro;
+
+				
+			fim;
+			
+			stopFuncaoBooleana := stopFuncaoBooleana - 1;
+
+			funcaoBooleana := funcaoBooleana;
+
+			{ESSES DOIS ULTIMOS COMANDOS DEVEM SER EXECUTAROS!
+				OU SEJA, NAO DEVE APARECER 200 NA SAIDA!
+			}
+			stopFuncaoBooleana:= 200;
+
+			escreva(stopFuncaoBooleana); 
+		fim; {FIM FUNCAO BOOLEANA}
+
+	inicio {inicio pInico}
+		se vezesQueEntrou = 0 entao
+			inicio
+				nFat:=6; {fatorial do numero que vai ser calculado}
+				fatResult := 1; {inicializa resultado}
+				fat;
+				escreva(fatResult);
+			fim
+		senao se vezesQueEntrou = 1 entao 
+			inicio 
+				stopFuncaoBooleana := 5; {parametro para funcaoBooleana }
+
+				p2stopFuncaoBooleana := falso; {parametro 2 para funcaoBooleana}
+
+				pChamandoNoEnquantoDaFuncaoBooleana:=verdadeiro; {parametro para ChamandoNoEnquantoDaFuncaoBooleana}
+
+				enquanto funcaoBooleana faca
+				inicio
+					{ expressão booleana violenta}
+
+					pChamandoNoEnquantoDaFuncaoBooleana:=
+						(verdadeiro e nao falso ou verdadeiro) ou
+						nao(verdadeiro e verdadeiro ou nao verdadeiro e nao verdadeiro)
+						e (falso e falso e falso ou nao falso e nao falso);
+
+					chamandoNoEnquantoDaFuncaoBooleana;
+					p2stopFuncaoBooleana := verdadeiro; { para parar o enquanto }
+
+					escreva(retornoChamandoNoEnquantoDaFuncaoBooleana);
+				fim
+			fim
+		senao se vezesQueEntrou  =  2 entao
+			inicio
+				den:=3
+			fim;
+		vezesQueEntrou:= vezesQueEntrou + 1;
+	fim; { fim pInicio }
+
+
+	funcao divisao:inteiro;
+		var aux,n,gd,dfs,ewq,fs,ew2q,das:inteiro;
+	
+		funcao soma:inteiro;
+			var aux,ackN, m,gd,dfs,ewq,fs,ew2q,das:inteiro;
+
+				funcao ack:inteiro;
+					var auxN, auxM,auxResult,gd,dfs,ewq,fs,ew2q,das:inteiro;
+
+				inicio { ackerman }
+					se ackN = 0 entao inicio pInicio; ack:= m + 1 fim {chama pInico aqui!}
+
+					senao se ackN > 0 e (m = 0) entao
+					inicio
+						auxM:=m;
+						m:=1;
+						ackN:= ackN - 1;
+						auxResult:=ack;
+						m:=auxM;
+						ack:=auxResult;
+						
+					fim
+					senao inicio
+						auxN:= ackN;
+						m:= m - 1;
+						m:= ack;
+						ackN:= auxN - 1;
+						ack:=ack;
+					fim
+				fim; {fim ackerman}
+		inicio {inicio soma de n até 0 }
+
+			se n > 0 entao inicio aux:=n; n:= n - 1; soma:= aux+soma fim
+			senao inicio
+				m:=2; {parametro para ackerman}
+				ackN := 1; {parametro para ackerman}
+				escreva(ack); { chama ackerman }
+				escreva(m); {m de ackerman }
+				soma:=0
+			fim
+		fim; {fim soma}
+	inicio { inicio divisao }
+
+		se num < den entao
+		inicio
+			n:=10; { será feita soma de 10 até 0 }
+			escreva(soma);
+			divisao:=0
+		fim
+		senao
+		inicio
+			num:= num - den;
+			divisao:= divisao + 1;
+		fim;
+
+	fim; {fim divisao}
+
+	funcao checagemSeFinal:booleano;
+		var b:booleano;
+		 i:inteiro;
+	inicio
+
+		se((2+3*(1000 div 452 * 256 * 256) - (-568*(-41))) 
+					div (5 + 3 + (-3) * (5+10 * 100 div 10)) -
+					(1+2+3-(-(526 div 123 * 563))) = -3462 ) entao
+
+			b:=(verdadeiro e nao falso ou verdadeiro) ou
+						nao(verdadeiro e verdadeiro ou nao verdadeiro e nao verdadeiro)
+						e (falso e falso e falso ou nao falso e nao falso)
+		senao
+			b:=falso;
+
+		i:=0;
+		enquanto(b) faca
+		inicio
+
+			se(i = 54) entao
+				b:= falso;
+
+			i:=54;
+		fim;
+
+		checagemSeFinal:=verdadeiro;
+	fim;
+
+	funcao contaMaluca:inteiro;
+	inicio
+		contaMaluca:=((((
+					((78*85+12) div (123+658*54) * (745+15 div 5) + (21 div 45 * 523) - 
+						(-5+(-5) * 4 * 4 * 4+5)) * (85-96+6525+7) div 41*8263)) -
+						(52*52 * 65 div 54 div 2 div 1 div 90 + 22222)) +
+						(5 * 6 * 7 * 8 div 5 div 2 + 9658)) div 420532971;
+	fim;
+
+inicio
+vezesQueEntrou := 0; {no procedimento pInicio}
+
+num:=125; 
+den:=5;
+
+{vou fazer 125 / 5 }
+
+escreva(divisao);
+
+den:=47;
+
+se(checagemSeFinal) entao
+	escreva(contaMaluca)
+senao
+	escreva(den);
+fim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
