@@ -52,7 +52,7 @@
      SUB               
      STR       8       
      JMP       5       
-5    NULL              
+4    NULL              
      LDC       4       
      STR       8       
 5    NULL              
@@ -73,7 +73,7 @@
      LDC       1       
      STR       12      
      JMP       11      
-11   NULL              
+10   NULL              
      LDV       11      
      STR       15      
      LDV       11      
@@ -101,11 +101,12 @@
      LDC       0       
      STR       15      
      JMP       16      
-16   NULL              
+15   NULL              
      LDC       1       
      STR       15      
 16   NULL              
      JMP       17      
+14   NULL              
 17   NULL              
      LDV       13      
      LDC       1       
@@ -133,7 +134,7 @@
      LDV       12      
      PRN               
      JMP       19      
-19   NULL              
+18   NULL              
      LDV       9       
      LDC       1       
      CEQ               
@@ -186,7 +187,7 @@
      JMP       20      
 21   NULL              
      JMP       22      
-22   NULL              
+19   NULL              
      LDV       9       
      LDC       2       
      CEQ               
@@ -194,115 +195,116 @@
      LDC       3       
      STR       1       
      JMP       23      
-23   NULL              
 22   NULL              
-19   NULL              
+23   NULL              
+24   NULL              
+25   NULL              
      LDV       9       
      LDC       1       
      ADD               
      STR       9       
-     DALLOC    15  1   
+     DALLOC    11  5   
      RETURN            
-     ALLOC     15  1   
+     ALLOC     11  1   
      JMP       13      
 26   NULL              
-     ALLOC     16  8   
-     ALLOC     24  1   
+     ALLOC     12  8   
+     ALLOC     20  1   
      JMP       27      
 28   NULL              
-     ALLOC     25  9   
-     ALLOC     34  1   
+     ALLOC     21  9   
+     ALLOC     30  1   
      JMP       29      
 30   NULL              
-     ALLOC     35  9   
+     ALLOC     31  9   
 31   NULL              
-     LDV       26      
+     LDV       22      
      LDC       0       
      CEQ               
      JMPF      32      
      CALL      6       
-     LDV       27      
+     LDV       23      
      LDC       1       
      ADD               
-     STR       34      
+     STR       30      
      JMP       33      
-33   NULL              
-     LDV       26      
+32   NULL              
+     LDV       22      
      LDC       0       
      CMA               
-     LDV       27      
+     LDV       23      
      LDC       0       
      CEQ               
      AND               
      JMPF      33      
-     LDV       27      
-     STR       36      
+     LDV       23      
+     STR       32      
      LDC       1       
-     STR       27      
-     LDV       26      
+     STR       23      
+     LDV       22      
      LDC       1       
      SUB               
-     STR       26      
+     STR       22      
      CALL      30      
-     LDV       34      
-     STR       37      
-     LDV       36      
-     STR       27      
-     LDV       37      
-     STR       34      
+     LDV       30      
+     STR       33      
+     LDV       32      
+     STR       23      
+     LDV       33      
+     STR       30      
      JMP       34      
-34   NULL              
-     LDV       26      
-     STR       35      
-     LDV       27      
-     LDC       1       
-     SUB               
-     STR       27      
-     CALL      30      
-     LDV       34      
-     STR       27      
-     LDV       35      
-     LDC       1       
-     SUB               
-     STR       26      
-     CALL      30      
-     LDV       34      
-     STR       34      
-34   NULL              
 33   NULL              
-     DALLOC    35  9   
+     LDV       22      
+     STR       31      
+     LDV       23      
+     LDC       1       
+     SUB               
+     STR       23      
+     CALL      30      
+     LDV       30      
+     STR       23      
+     LDV       31      
+     LDC       1       
+     SUB               
+     STR       22      
+     CALL      30      
+     LDV       30      
+     STR       30      
+34   NULL              
+35   NULL              
+     DALLOC    31  9   
      RETURN            
 29   NULL              
-     LDV       17      
+     LDV       13      
      LDC       0       
      CMA               
      JMPF      36      
-     LDV       17      
-     STR       25      
-     LDV       17      
+     LDV       13      
+     STR       21      
+     LDV       13      
      LDC       1       
      SUB               
-     STR       17      
+     STR       13      
      CALL      28      
-     LDV       25      
-     LDV       24      
+     LDV       21      
+     LDV       20      
      ADD               
-     STR       24      
+     STR       20      
      JMP       37      
-37   NULL              
+36   NULL              
      LDC       2       
-     STR       27      
+     STR       23      
      LDC       1       
-     STR       26      
+     STR       22      
      CALL      30      
-     LDV       34      
+     LDV       30      
      PRN               
-     LDV       27      
+     LDV       23      
      PRN               
      LDC       0       
-     STR       24      
+     STR       20      
 37   NULL              
-     DALLOC    34  1   
+     DALLOC    21  10  
      RETURN            
 27   NULL              
      LDV       0       
@@ -310,31 +312,31 @@
      CME               
      JMPF      38      
      LDC       10      
-     STR       17      
+     STR       13      
      CALL      28      
-     LDV       24      
+     LDV       20      
      PRN               
      LDC       0       
-     STR       15      
+     STR       11      
      JMP       39      
-39   NULL              
+38   NULL              
      LDV       0       
      LDV       1       
      SUB               
      STR       0       
      CALL      26      
-     LDV       15      
+     LDV       11      
      LDC       1       
      ADD               
-     STR       15      
+     STR       11      
 39   NULL              
-     DALLOC    33  1   
+     DALLOC    12  9   
      RETURN            
-     ALLOC     33  1   
+     ALLOC     12  1   
      JMP       31      
 40   NULL              
-     ALLOC     34  1   
-     ALLOC     35  1   
+     ALLOC     13  1   
+     ALLOC     14  1   
 41   NULL              
      LDC       2       
      LDC       3       
@@ -413,34 +415,35 @@
      OR                
      AND               
      OR                
-     STR       34      
+     STR       13      
      JMP       43      
+42   NULL              
+     LDC       0       
+     STR       13      
 43   NULL              
      LDC       0       
-     STR       34      
-43   NULL              
-     LDC       0       
-     STR       35      
+     STR       14      
 44   NULL              
-     LDV       34      
+     LDV       13      
      JMPF      45      
-     LDV       35      
+     LDV       14      
      LDC       54      
      CEQ               
      JMPF      46      
      LDC       0       
-     STR       34      
+     STR       13      
      JMP       47      
+46   NULL              
 47   NULL              
      LDC       54      
-     STR       35      
+     STR       14      
      JMP       44      
 45   NULL              
      LDC       1       
-     STR       33      
-     DALLOC    34  2   
+     STR       12      
+     DALLOC    13  2   
      RETURN            
-     ALLOC     34  1   
+     ALLOC     13  1   
      JMP       41      
 48   NULL              
 49   NULL              
@@ -525,8 +528,8 @@
      ADD               
      LDC       420532971    
      DIVI              
-     STR       34      
-     DALLOC    35  0   
+     STR       13      
+     DALLOC    14  0   
      RETURN            
 1    NULL              
      LDC       0       
@@ -536,20 +539,20 @@
      LDC       5       
      STR       1       
      CALL      26      
-     LDV       15      
+     LDV       11      
      PRN               
      LDC       47      
      STR       1       
      CALL      40      
-     LDV       33      
+     LDV       12      
      JMPF      50      
      CALL      48      
-     LDV       34      
+     LDV       13      
      PRN               
      JMP       51      
-51   NULL              
+50   NULL              
      LDV       1       
      PRN               
 51   NULL              
-     DALLOC    0   35  
+     DALLOC    0   14  
      HLT               

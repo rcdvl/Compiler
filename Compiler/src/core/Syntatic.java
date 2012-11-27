@@ -123,6 +123,7 @@ public class Syntatic implements Runnable {
         // Lexico(token)
         token = runLexic();
 
+        varDeclCount = 0;
         analyzeVarDeclarations();
         analyzeSubRoutines();
         analyzeCommands();
@@ -293,8 +294,8 @@ public class Syntatic implements Runnable {
             token = runLexic();
             analyzeSimpleCommand();
             codeGenerator.generate("", "JMP", label, "");
+            codeGenerator.generate(labelAux, "NULL", "", "");
             if (token.getSymbol() == Lexic.sElse) {
-                codeGenerator.generate(labelAux, "NULL", "", "");
                 token = runLexic();
                 analyzeSimpleCommand();
             }
@@ -448,6 +449,7 @@ public class Syntatic implements Runnable {
 
     private void analyzeSubRoutines() throws CompileErrorException {
         int labelAux;
+        int varDeclBackup = varDeclCount;
 
         labelAux = label;
         System.out.println("jmp de subrotina, vai para " + label);
@@ -457,11 +459,13 @@ public class Syntatic implements Runnable {
             if (token.getSymbol() == Lexic.sProcedure) {
                 codeGenerator.doPostponeGenerate(null, null, -1, 1);
                 analyzeProcedureDeclaration();
+                varDeclCount = varDeclBackup;
             } else {
                 codeGenerator.doPostponeGenerate("", "ALLOC ", currentAddress, 1);
                 currentAddress++;
+                varDeclBackup++;
                 analyzeFunctionDeclaration(currentAddress - 1);
-                varDeclCount = 1;
+                varDeclCount = varDeclBackup;
             }
             if (token.getSymbol() == Lexic.sSemicolon) {
                 token = runLexic();
@@ -475,7 +479,6 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeFunctionDeclaration(int returnAddress) throws CompileErrorException {
-        varDeclCount = 0;
         token = runLexic();
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declfunc_tabela(token.lexema)
@@ -534,7 +537,6 @@ public class Syntatic implements Runnable {
     }
 
     private void analyzeProcedureDeclaration() throws CompileErrorException {
-        varDeclCount = 0;
         token = runLexic();
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declproc_tabela(token.lexema)

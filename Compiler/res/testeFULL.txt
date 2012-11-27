@@ -20,6 +20,11 @@ var i:inteiro;
       escreva(i);
       p6;
    fim;
+   procedimento proc;
+   inicio
+      i := 999;
+      escreva(i);
+   fim;
 inicio
    p3;
    escreva(entrada);
@@ -29,6 +34,7 @@ inicio
    escreva(i);
    i:= i * (-2); { -10 }
    escreva(i);
+   proc;
 fim;
 
 inicio

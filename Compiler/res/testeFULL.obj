@@ -29,6 +29,15 @@
      CALL      6       
      DALLOC    4   1   
      RETURN            
+     JMP       7       
+8    NULL              
+9    NULL              
+     LDC       999     
+     STR       3       
+     LDV       3       
+     PRN               
+     DALLOC    4   0   
+     RETURN            
 3    NULL              
      CALL      4       
      LDV       1       
@@ -56,6 +65,7 @@
      STR       3       
      LDV       3       
      PRN               
+     CALL      8       
      DALLOC    3   1   
      RETURN            
 1    NULL              
@@ -75,30 +85,30 @@
      STR       2       
      LDV       2       
      NEG               
-     JMPF      8       
+     JMPF      10      
      LDV       1       
      PRN               
-     JMP       9       
-8    NULL              
+     JMP       11      
+10   NULL              
      LDC       100     
      INV               
      STR       1       
      LDV       1       
      PRN               
-9    NULL              
-10   NULL              
+11   NULL              
+12   NULL              
      LDV       0       
      LDC       0       
      CMA               
-     JMPF      11      
+     JMPF      13      
      LDV       0       
      PRN               
      LDV       0       
      LDC       1       
      SUB               
      STR       0       
-     JMP       10      
-11   NULL              
+     JMP       12      
+13   NULL              
      CALL      2       
      DALLOC    0   3   
      HLT               
