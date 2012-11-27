@@ -370,6 +370,7 @@ public class Syntatic implements Runnable {
             } else {
                 semantic.addToEquation(token.getLexeme());
                 semantic.addToEquation(unaryToken);
+                unaryToken = "";
             }
             token = runLexic();
         } else if (token.getSymbol() == Lexic.sNot) {

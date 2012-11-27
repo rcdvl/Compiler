@@ -1,77 +1,84 @@
+     
+                                             
+programa testeL;
+
+var rai, mosso: inteiro;
+
+	procedimento p1;
+
+	inicio	
+		se( ( ( ( ( (7>9) e verdadeiro) ou falso) ou falso ) e verdadeiro) e falso) ou ( nao falso e verdadeiro) e ( -60 div 12 >= -2 * 3)
+		entao
+			escreva(mosso)
+		senao 
+			escreva(rai)
+	
+	fim;
+
+	procedimento testaOperadores;
+
+	var aux, contador : inteiro;
+	      check:booleano;
+
+	inicio
+
+		aux := 10;
+		contador := 0;
+		check:=verdadeiro;
+		enquanto check faca
+		inicio
+
+			se aux <> 11 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux >= 9 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux <= 8 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > 6 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux < 8 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > -10 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > 2 e nao falso entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			
+				check:=falso;
+			fim;
+
+		escreva(contador);
 
 
-programa teste;
+	fim;
 
-var int, entrada:inteiro;
-       b:booleano;
 
-procedimento p4;
-var i:inteiro;
-   procedimento p3;
-   var i:inteiro;
-      procedimento p6;
-      var j:inteiro;
-      inicio
-         j:= 1000 + i + 4;
-         escreva(j);
-      fim;
-   inicio
-      i:= 1000;
-      escreva(i);
-      p6;
-   fim;
-   procedimento proc;
-   inicio
-      i := 999;
-      escreva(i);
-   fim;
-inicio
-   p3;
-   escreva(entrada);
-   i := -2+10-(-2); { tem que dar 10 }
-   escreva(i);
-   i:= i div 2; { 5 }
-   escreva(i);
-   i:= i * (-2); { -10 }
-   escreva(i);
-   proc;
-fim;
+inicio	
+	
+	rai := 1;
+	mosso := 10;
 
-inicio
-   int:= 1 + 4;
-   leia(entrada);
-   entrada := entrada + int;
-   escreva(entrada);
-      
-   b := verdadeiro;
-   se nao b
-      entao escreva(entrada)
-   senao
-   inicio
-      entrada := -100;
-      escreva(entrada);
-   fim;
-   enquanto int > 0
-   faca
-   inicio
-      escreva(int);
-      int := int - 1;
-   fim;
-   p4;
+	p1;
+
+	testaOperadores;			
 fim.
-
-{ saída
-  entrada + 5
-  -100
-  5
-  4
-  3
-  2
-  1
-  1000
-  2004
-  -100
-  10
-  5
-  -10
-  }
