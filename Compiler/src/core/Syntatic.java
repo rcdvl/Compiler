@@ -23,6 +23,7 @@ public class Syntatic implements Runnable {
     private int currentAddress = 0;
     private int varDeclCount;
     private String unaryToken;
+    private String unarySignal;
 
     private Syntatic() {
     	Semantic.newInstance();
@@ -40,7 +41,7 @@ public class Syntatic implements Runnable {
 
         return instance;
     }
-    
+
     public static void newInstance() {
     	instance = new Syntatic();
     }
@@ -115,7 +116,6 @@ public class Syntatic implements Runnable {
             return;
         }
 
-        System.out.println(lexic.getToken().getLexeme());
         //        } while (lexic.getToken() != null);
     }
 
@@ -189,8 +189,7 @@ public class Syntatic implements Runnable {
                 	}
                 	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE) {
                 		analyzeFunctionCall();
-                		System.out.println("RETURN ADDRESS DA " + ste.label + ": " + ste.returnAddress);
-                        codeGenerator.generate("", "LDV", ste.returnAddress, "");
+                		codeGenerator.generate("", "LDV", ste.returnAddress, "");
 	                    codeGenerator.generate("", "PRN", "", "");
                 	} else {
 	                    codeGenerator.generate("", "LDV", semantic.get(symbolIndex).address, "");
@@ -250,7 +249,6 @@ public class Syntatic implements Runnable {
     private void analyzeWhile() throws CompileErrorException {
         int firstLabelAux, secondLabelAux;
         firstLabelAux = label;
-        System.out.println("null que indica o comeco do while: " + label);
         codeGenerator.generate(label, "NULL", "    ", "    ");
         label++;
         token = runLexic();
@@ -260,17 +258,14 @@ public class Syntatic implements Runnable {
         if (!semantic.isBooleanExpression) {
         	throw new CompileErrorException("erro, esperava uma expressao booleana no while", lexic.lineNumber);
         }
-        
+
         if (token.getSymbol() == Lexic.sDo) {
             secondLabelAux = label;
-            System.out.println("jmpf pra sair do while, vai para " + secondLabelAux);
             codeGenerator.generate("    ", "JMPF", label, "    ");
             label++;
             token = runLexic();
             analyzeSimpleCommand();
-            System.out.println("jmp pra voltar pro while, vai para " + firstLabelAux);
             codeGenerator.generate("    ", "JMP ", firstLabelAux, "    ");
-            System.out.println("null pra sair do while, vai para " + secondLabelAux);
             codeGenerator.generate(secondLabelAux, "NULL", "    ", "    ");
         } else {
             throw new CompileErrorException("erro, esperava faca depois do enquanto", lexic.lineNumber);
@@ -287,19 +282,22 @@ public class Syntatic implements Runnable {
         if (!semantic.isBooleanExpression) {
         	throw new CompileErrorException("erro, esperava uma expressao booleana no if", lexic.lineNumber);
         }
-        
+
         codeGenerator.generate("", "JMPF", label, "");
         label++;
         if (token.getSymbol() == Lexic.sThen) {
             token = runLexic();
             analyzeSimpleCommand();
-            codeGenerator.generate("", "JMP", label, "");
-            codeGenerator.generate(labelAux, "NULL", "", "");
+
             if (token.getSymbol() == Lexic.sElse) {
-                token = runLexic();
+                codeGenerator.generate("", "JMP", label, "");
+                codeGenerator.generate(labelAux, "NULL", "", "");
+            	token = runLexic();
                 analyzeSimpleCommand();
+                codeGenerator.generate(label, "NULL", "", "");
+            } else {
+            	codeGenerator.generate(labelAux, "NULL", "", "");
             }
-            codeGenerator.generate(label, "NULL", "", "");
             label++;
         } else {
             throw new CompileErrorException("erro, esperava entao depois do if", lexic.lineNumber);
@@ -319,14 +317,15 @@ public class Syntatic implements Runnable {
 
     private void analyzeSimpleExpression() throws CompileErrorException {
         unaryToken = "";
+        unarySignal = "";
         if (token.getSymbol() == Lexic.sPlus || token.getSymbol() == Lexic.sMinus) {
             unaryToken = "uinv";
+            unarySignal = token.getLexeme();
             //semantic.addToEquation(token.getLexeme());
             token = runLexic();
         }
         analyzeTerm();
 
-        unaryToken = "";
         while (token.getSymbol() == Lexic.sPlus || token.getSymbol() == Lexic.sMinus || token.getSymbol() == Lexic.sOr) {
             semantic.addToEquation(token.getLexeme());
             token = runLexic();
@@ -353,9 +352,19 @@ public class Syntatic implements Runnable {
             if ((index = semantic.searchForDeclaration(token.getLexeme())) != -1) {
                 SymbolsTableEntry entry = semantic.get(index);
                 if (entry.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE || entry.type == SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE) {
+                    if (!unaryToken.isEmpty() && unarySignal.equals("-")) {
+                        semantic.addToEquation(unaryToken);
+                        unaryToken = "";
+                        unarySignal = "";
+                    }
                     semantic.addToEquation(token.getLexeme());
                     analyzeFunctionCall();
                 } else {
+                    if (!unaryToken.isEmpty() && unarySignal.equals("-")) {
+                        semantic.addToEquation(unaryToken);
+                        unaryToken = "";
+                        unarySignal = "";
+                    }
                     semantic.addToEquation(token.getLexeme());
                     token = runLexic();
                 }
@@ -368,9 +377,12 @@ public class Syntatic implements Runnable {
             if (unaryToken.isEmpty()) {
                 semantic.addToEquation(token.getLexeme());
             } else {
+                if (unarySignal.equals("-")) {
+                    semantic.addToEquation(unaryToken);
+                }
                 semantic.addToEquation(token.getLexeme());
-                semantic.addToEquation(unaryToken);
                 unaryToken = "";
+                unarySignal = "";
             }
             token = runLexic();
         } else if (token.getSymbol() == Lexic.sNot) {
@@ -378,6 +390,11 @@ public class Syntatic implements Runnable {
             token = runLexic();
             analyzeFactor();
         } else if (token.getSymbol() == Lexic.sOpenParentheses) {
+            if (!unaryToken.isEmpty() && unarySignal.equals("-")) {
+                semantic.addToEquation(unaryToken);
+            }
+            unaryToken = "";
+            unarySignal = "";
             semantic.addToEquation(token.getLexeme());
             token = runLexic();
             analyzeExpression();
@@ -416,15 +433,14 @@ public class Syntatic implements Runnable {
         token = runLexic();
         if (token.getSymbol() == Lexic.sAttribution) {
             analyzeAttribution();
-            
+
 	        SymbolsTableEntry ste = semantic.get(semantic.searchForDeclaration(oldToken.getLexeme()));
 	        if (ste.level == SymbolsTableEntry.SCOPE_MARK && semantic.getCurrentScope().equals(oldToken.getLexeme())) {
-        		System.out.println("RETURN ADDRESS DA " + ste.label + ": " + ste.returnAddress);
 	        	codeGenerator.generate("", "STR", ste.returnAddress, "");
 	        } else {
 	        	codeGenerator.generate("", "STR", semantic.get(semantic.searchForDeclaration(oldToken.getLexeme())).address, "");
 	        }
-            
+
         } else {
             analyzeProcedureCall(oldToken);
         }
@@ -453,7 +469,6 @@ public class Syntatic implements Runnable {
         int varDeclBackup = varDeclCount;
 
         labelAux = label;
-        System.out.println("jmp de subrotina, vai para " + label);
         codeGenerator.postponeGenerate("    ", "JMP ", label, "    ");
         label++;
         while (token.getSymbol() == Lexic.sProcedure || token.getSymbol() == Lexic.sFunction) {
@@ -475,12 +490,12 @@ public class Syntatic implements Runnable {
             }
         }
 
-        System.out.println("null de subrotina " + labelAux);
         codeGenerator.generate(labelAux, "NULL", "    ", "    ");
     }
 
     private void analyzeFunctionDeclaration(int returnAddress) throws CompileErrorException {
         token = runLexic();
+        int addressBefore;
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declfunc_tabela(token.lexema)
             // se não encontrou
@@ -499,7 +514,7 @@ public class Syntatic implements Runnable {
 
                 codeGenerator.generate(label, "NULL", "    ", "    ");
                 label++;
-                
+
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sColon) {
                     token = runLexic();
@@ -514,6 +529,7 @@ public class Syntatic implements Runnable {
                         }
 
                         token = runLexic();
+                        addressBefore = currentAddress;
                         if (token.getSymbol() == Lexic.sSemicolon) {
                             analyzeBlock();
                         }
@@ -532,13 +548,14 @@ public class Syntatic implements Runnable {
         }
 
         semantic.popUntilScope();
-        codeGenerator.generate("    ", "DALLOC", currentAddress - varDeclCount, varDeclCount);
+        codeGenerator.generate("    ", "DALLOC", addressBefore, varDeclCount);
         codeGenerator.generate("    ", "RETURN", "    ", "    ");
-        currentAddress = currentAddress - varDeclCount;
+        currentAddress = addressBefore;
     }
 
     private void analyzeProcedureDeclaration() throws CompileErrorException {
         token = runLexic();
+        int addressBefore;
         if (token.getSymbol() == Lexic.sIdentifier) {
             // pesquisa_declproc_tabela(token.lexema)
             // se não encontrou
@@ -553,10 +570,10 @@ public class Syntatic implements Runnable {
                 ste.address = currentAddress;
                 semantic.addSymbolToTable(ste);
 
-                System.out.println("label do procedimento que o call vai buscar " + label);
                 codeGenerator.generate(label, "NULL", "    ", "    ");
                 label++;
 
+                addressBefore = currentAddress;
                 token = runLexic();
                 if (token.getSymbol() == Lexic.sSemicolon) {
                     analyzeBlock();
@@ -572,9 +589,9 @@ public class Syntatic implements Runnable {
             throw new CompileErrorException("erro, esperava identificador", lexic.lineNumber);
         }
         semantic.popUntilScope();
-        codeGenerator.generate("    ", "DALLOC", currentAddress - varDeclCount, varDeclCount);
+        codeGenerator.generate("    ", "DALLOC", addressBefore, varDeclCount);
         codeGenerator.generate("    ", "RETURN", "    ", "    ");
-        currentAddress = currentAddress - varDeclCount;
+        currentAddress = addressBefore;
     }
 
     private void analyzeVarDeclarations() throws CompileErrorException {

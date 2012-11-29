@@ -25,7 +25,7 @@ public class Semantic {
     public final static int OP_OR = 11;
     public final static int OP_INV = 12;
     public final static int OP_NEG = 13;
-    
+
     public boolean isBooleanExpression = false;
 
     private Semantic() {
@@ -39,7 +39,7 @@ public class Semantic {
 
         return instance;
     }
-    
+
     public static void newInstance() {
     	instance = new Semantic();
     }
@@ -143,7 +143,7 @@ public class Semantic {
         }
         return "";
     }
-    
+
     public SymbolsTableEntry get(int index) {
         return symbolsTable.get(index);
     }
@@ -254,7 +254,7 @@ public class Semantic {
         Vector<String> exp = getPostfixEquation();
         CodeGenerator generator = CodeGenerator.getInstance();
         isBooleanExpression = false;
-        String booleanOperators[] = {">", ">=", "<", "<=", "=", "<>", "e", "ou", "nao", "verdadeiro", "falso"};
+        String booleanOperators[] = {">", ">=", "<", "<=", "=", "<>", "e", "ou", "nao", "1", "0"};
 
         for (String symbol : exp) {
             if (symbol.equals(Semantic.OPERATORS[Semantic.OP_PLUS])) {

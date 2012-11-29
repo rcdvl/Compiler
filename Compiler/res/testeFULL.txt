@@ -1,84 +1,100 @@
-     
-                                             
-programa testeL;
-
-var rai, mosso: inteiro;
-
-	procedimento p1;
-
-	inicio	
-		se( ( ( ( ( (7>9) e verdadeiro) ou falso) ou falso ) e verdadeiro) e falso) ou ( nao falso e verdadeiro) e ( -60 div 12 >= -2 * 3)
-		entao
-			escreva(mosso)
-		senao 
-			escreva(rai)
-	
-	fim;
-
-	procedimento testaOperadores;
-
-	var aux, contador : inteiro;
-	      check:booleano;
-
-	inicio
-
-		aux := 10;
-		contador := 0;
-		check:=verdadeiro;
-		enquanto check faca
-		inicio
-
-			se aux <> 11 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux >= 9 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux <= 8 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux > 6 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux < 8 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux > -10 entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			se aux > 2 e nao falso entao
-				inicio
-					aux := aux -1;
-					contador := contador +1;
-				fim;
-			
-				check:=falso;
-			fim;
-
-		escreva(contador);
 
 
-	fim;
+programa teste;
 
+var int, entrada:inteiro;
+       b:booleano;
 
-inicio	
-	
-	rai := 1;
-	mosso := 10;
+procedimento p4;
+var i:inteiro;
+   procedimento p3;
+   var i:inteiro;
+      procedimento p6;
+      var j:inteiro;
+      inicio
+         se verdadeiro entao
+         j:= 1000 + i + 4;
+         escreva(j);
+         j:= 0;
+         enquanto j < 500 faca
+         inicio
+            inicio
+               inicio
+                  j:=j+(-1 div (-(-(+(-1)))))-1+1 { j++ }
+               fim
+            fim
+         fim;
+         se verdadeiro ou (verdadeiro e (falso ou (verdadeiro e verdadeiro) ou falso)) e j <= (500 + (-10) div (-2)) entao
+         escreva(j);
+      fim;
+   inicio
+      i:= 1000;
+      escreva(i);
+      p6;
+   fim;
+   procedimento proc;
+   inicio
+      se verdadeiro entao
+         i := 999;
+      se i < (1000 div (-(-1000))) * (10 * (-(-10)) * (+(-(-(+10))))) -(-(-(-i))) entao
+      escreva(i);
+   fim;
+   
+   procedimento chama_proc;
+   var x,y,z:inteiro;
+   o,u:booleano;
+   inicio
+      proc;
+   fim;
+inicio
+   p3;
+   escreva(entrada);
+   i := -2+10-(-2); { tem que dar 10 }
+   escreva(i);
+   i:= i div 2; { 5 }
+   escreva(i);
+   i:= i * (-2); { -10 }
+   escreva(i);
+   chama_proc;
+fim;
 
-	p1;
-
-	testaOperadores;			
+inicio
+   int:= 1 + 4;
+   leia(entrada);
+   entrada := entrada + int;
+   escreva(entrada);
+      
+   b := verdadeiro;
+   se nao b
+      entao escreva(entrada)
+   senao
+   inicio
+      entrada := -100;
+      escreva(entrada);
+   fim;
+   enquanto int > 0
+   faca
+   inicio
+      escreva(int);
+      int := int - 1;
+   fim;
+   p4;
 fim.
+
+{ saída
+  entrada + 5
+  -100
+  5
+  4
+  3
+  2
+  1
+  1000
+  2004
+  500
+  -100
+  10
+  5
+  -10
+  999
+  }

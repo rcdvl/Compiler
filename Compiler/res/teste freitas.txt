@@ -1,0 +1,58 @@
+programa teste1;
+
+var vib:inteiro;
+  tyl,adita:inteiro;
+kid:booleano;
+pop,i:inteiro;
+
+procedimento port;
+ var b:booleano; i:inteiro;
+
+ procedimento adit;
+  var i:inteiro;
+  inicio
+    adita:=0;
+ leia(i);
+ enquanto (i >= 10)
+ faca inicio
+  adita:=adita+vib*pop; escreva(adita);
+   i:=1;
+  fim;
+      fim;
+
+ inicio
+  inicio
+   leia(tyl);
+   b:=nao (nao (nao verdadeiro ou falso));
+   kid:=nao(nao(tyl <= 0));
+   se kid entao i:=5 senao i:=100;
+   se kid entao tyl:=tyl;
+   vib:=tyl;
+   pop:=vib;
+   se kid ou (nao kid) entao
+     enquanto (pop > 0) faca
+    inicio
+  adit;
+     i:=adita+adita*2;
+    escreva(i);
+
+ 
+     pop:=+(-pop-(+1));
+    fim  fim;
+  fim;
+
+inicio
+ vib:=-2;
+ escreva(vib);
+ tyl:=10;
+ i:=20;
+ inicio
+  port; kid:=i <= 100;
+   se kid entao
+inicio tyl:=tyl div i div 1 + vib * 10 - 100 fim
+   senao tyl:=200
+ fim;
+  escreva(tyl);
+ tyl:=tyl div 1 div 10*2;
+ escreva(tyl)
+ fim.

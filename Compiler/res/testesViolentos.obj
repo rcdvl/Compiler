@@ -48,6 +48,7 @@
      DIVI              
      LDC       563     
      MULT              
+     INV               
      SUB               
      SUB               
      STR       8       
@@ -380,6 +381,7 @@
      DIVI              
      LDC       563     
      MULT              
+     INV               
      SUB               
      SUB               
      LDC       3462    
