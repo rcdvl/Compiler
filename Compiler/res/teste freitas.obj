@@ -1,15 +1,12 @@
      START             
-     ALLOC     0   1   
-     ALLOC     1   2   
-     ALLOC     3   1   
-     ALLOC     4   2   
+     ALLOC     0   6   
      JMP       1       
 2    NULL              
-     ALLOC     6   1   
-     ALLOC     7   1   
+     ALLOC     6   2   
      JMP       3       
 4    NULL              
      ALLOC     8   1   
+     JMP       5       
 5    NULL              
      LDC       0       
      STR       2       
@@ -72,12 +69,12 @@
      LDV       3       
      NEG               
      OR                
-     JMPF      12      
-13   NULL              
+     JMPF      11      
+12   NULL              
      LDV       4       
      LDC       0       
      CMA               
-     JMPF      14      
+     JMPF      13      
      CALL      4       
      LDV       2       
      LDV       2       
@@ -92,9 +89,9 @@
      LDC       1       
      SUB               
      STR       4       
-     JMP       13      
-14   NULL              
-12   NULL              
+     JMP       12      
+13   NULL              
+11   NULL              
      DALLOC    6   2   
      RETURN            
 1    NULL              
@@ -113,7 +110,7 @@
      CMEQ              
      STR       3       
      LDV       3       
-     JMPF      16      
+     JMPF      14      
      LDV       1       
      LDV       5       
      DIVI              
@@ -126,11 +123,11 @@
      LDC       100     
      SUB               
      STR       1       
-     JMP       17      
-16   NULL              
+     JMP       15      
+14   NULL              
      LDC       200     
      STR       1       
-17   NULL              
+15   NULL              
      LDV       1       
      PRN               
      LDV       1       

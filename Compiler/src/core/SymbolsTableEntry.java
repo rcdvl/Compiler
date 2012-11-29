@@ -21,4 +21,6 @@ public class SymbolsTableEntry {
     public int label;
     public int address;
     public int returnAddress;
+
+    public int brutalReturnLabel;
 }

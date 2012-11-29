@@ -1,0 +1,300 @@
+{
+primeira funcao calcula o fatorial recursivamente: ex : fat(5) = 120
+segunda funcao calcula o fibonacci resursivamente: ex: fibo(0) = 0, fibo(1) = 1, fibo(2) = 1, fibo(3) = 2, fibo(4) = 3, fibo(5) = 5, fibo(6) = 8, fibo(7) = 13
+terceira funcao calcula o mdc entre dois numeros: ex: numeroMdc1 = 60 e numeroMdc2 = 36 entao resultado = 12
+quarta funcao calcula um numero (base) elevado a um expoente : exemplo 3^3 = 27
+quinta funcao (fChamaFuncoes) somente faz a chamada a todas as outras e retorna o numero de funcoes que existem, 4.
+o procedimetno pChamaFuncoes imprimi o valor retornado pela quinta funcao, 4.
+funcao expressaoBooleana analisa uma expressao verdadeira e retorna falso, main imprimi 0.
+
+
+entrada:
+10         < fatorial
+16	< fibonacci
+4096	< mdc
+64	< mdc
+3	< base
+10	< expoente
+saida:
+3628800< fatorial
+987	< fibo
+64	< mdc
+59049	< exponenciacao
+4	< numero funcoes
+0	< analise expressao verdadeira que retorna falso e imprimi 0
+7          < valor do contador apos testar os operadores relacionais, unario e neg
+1 	< teste procedimento de fora chamando procedimento de dentro que chama funcao de fora que chama funcao de dentro que retorna verdadeiro. funcao de fora retorna 1. Proc
+de dentro imprimi 1.
+
+}
+
+programa testeL;
+
+var numeroFatorial, numeroFibonacci, numeroMdc1, numeroMdc2, numeroBase, numeroExpoente, aux : inteiro;
+
+
+	funcao fatorial : inteiro;
+
+	var aux : inteiro;
+
+	inicio
+
+		se numeroFatorial <=0
+		entao 
+			fatorial := 1
+		senao
+		inicio
+			aux := numeroFatorial;
+			numeroFatorial := numeroFatorial -1;
+			fatorial := aux * fatorial;
+		fim;
+	fim;
+
+	funcao fibo : inteiro;
+
+	var resultado, aux : inteiro;
+
+	inicio		
+		se numeroFibonacci = 0
+		entao
+			fibo := 0
+		senao
+		inicio	
+			se numeroFibonacci <=2
+			entao
+				fibo := 1
+			senao
+			inicio		
+				aux := numeroFibonacci;	
+				numeroFibonacci := aux -1;				
+				resultado := fibo;                             
+				numeroFibonacci := aux -2;
+				fibo := resultado + fibo;
+
+			fim;
+		fim;
+
+	fim;
+
+
+	funcao mdc : inteiro;
+
+	var aux: inteiro;
+
+	inicio
+
+		se numeroMdc1 = numeroMdc2
+		entao
+			mdc := numeroMdc1
+		senao
+		inicio
+
+			se numeroMdc1 > numeroMdc2
+			entao
+			inicio
+				numeroMdc1:= numeroMdc1 - numeroMdc2;
+				mdc := mdc;
+			fim
+
+			senao
+			inicio
+				aux := numeroMdc1;
+				numeroMdc1 := numeroMdc2 - numeroMdc1;
+				numeroMdc2 := aux;
+				mdc := mdc;
+			fim;
+
+		fim;
+
+	fim;	
+
+	funcao calculaPotencia : inteiro;
+
+	inicio
+
+		se numeroExpoente = 0
+		entao calculaPotencia := 1
+		senao
+		inicio
+			numeroExpoente := numeroExpoente -1;
+			calculaPotencia := numeroBase * calculaPotencia; 
+		fim;
+
+	fim;
+
+
+	funcao fChamaFuncoes : inteiro;
+	
+	var numeroFuncoes: inteiro;
+
+	inicio
+	
+		numeroFuncoes := 0;
+
+		leia(numeroFatorial);
+		escreva(fatorial);
+		numeroFuncoes := numeroFuncoes +1;
+	
+
+		leia(numeroFibonacci);
+		escreva(fibo);
+		numeroFuncoes := numeroFuncoes +1;
+	
+		leia(numeroMdc1);
+		leia(numeroMdc2);
+		escreva(mdc);
+		numeroFuncoes := numeroFuncoes +1;
+
+
+		leia(numeroBase);
+		leia(numeroExpoente);
+		escreva(calculaPotencia);	
+		numeroFuncoes := numeroFuncoes +1;
+	
+
+		fChamaFuncoes := numeroFuncoes;
+
+	fim;
+
+	procedimento pChamaFuncoes;
+
+	inicio
+		escreva(fChamaFuncoes);
+	fim;
+
+	funcao expressaoBooleana : booleano;
+
+	inicio
+
+	
+		se( ( ( ( ( (7>9) e verdadeiro) ou falso) ou falso ) e verdadeiro) e falso) ou ( nao falso e verdadeiro) e ( -60 div 12 >= -2 * 3)
+		entao
+			expressaoBooleana := falso
+		senao 
+			expressaoBooleana := verdadeiro;
+	
+	fim;
+
+	funcao funcaoDeFora : inteiro;
+
+		funcao funcaoDeDentro : booleano;
+
+		inicio
+
+			funcaoDeDentro := verdadeiro;
+		
+		fim;
+
+	inicio
+
+		se funcaoDeDentro entao
+			funcaoDeFora := 1
+		senao
+			funcaoDeFora := 0;
+
+	fim;
+
+	procedimento procedimentoDeFora;
+
+		procedimento procedimentoDeDentro;
+			
+		var aux : inteiro;
+
+		inicio
+			aux := 0;
+			se funcaoDeFora = 0 
+			entao
+				escreva(aux)
+			senao
+				inicio
+				aux := 1;
+				escreva(aux);
+				fim;
+
+		fim;
+
+
+	inicio
+
+		procedimentoDeDentro;
+
+	fim;
+
+
+	procedimento testaOperadores;
+
+	var aux, contador : inteiro;
+	      check:booleano;
+
+	inicio
+
+		aux := 10;
+		contador := 0;
+		check:=verdadeiro;
+		enquanto check faca
+		inicio
+
+			se aux <> 11 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux >= 9 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux <= 8 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > 6 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux < 8 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > -10 entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			se aux > 2 e nao falso entao
+				inicio
+					aux := aux -1;
+					contador := contador +1;
+				fim;
+			
+				check:=falso;
+			fim;
+
+		escreva(contador);
+
+
+	fim;
+
+
+inicio
+	
+	pChamaFuncoes;	
+	
+	aux :=1;
+	
+	se expressaoBooleana 
+	entao
+		escreva(aux)
+	senao
+	inicio
+		aux := 0;
+		escreva(aux);
+	fim;
+
+	testaOperadores;	
+
+	procedimentoDeFora;			
+fim.
