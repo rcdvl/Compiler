@@ -20,8 +20,8 @@
      LDC       1       
      SUB               
      STR       0       
-     CALL      3       
      LDV       8       
+     CALL      3       
      LDV       7       
      MULT              
      STR       7       
@@ -65,8 +65,8 @@
      LDC       2       
      SUB               
      STR       1       
-     CALL      8       
      LDV       9       
+     CALL      8       
      LDV       8       
      ADD               
      STR       8       
@@ -137,8 +137,8 @@
      LDC       1       
      SUB               
      STR       5       
-     CALL      22      
      LDV       4       
+     CALL      22      
      LDV       10      
      MULT              
      STR       10      

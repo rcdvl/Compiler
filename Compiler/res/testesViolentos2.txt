@@ -1,0 +1,63 @@
+{
+	Saida:
+	85
+	6
+	-710
+	714
+	7
+}
+programa t;
+	var rP,a:inteiro;
+procedimento p;
+		var param,a:inteiro;
+		funcao fInteiro:inteiro;
+		inicio
+			se (param <> 10) entao
+			inicio
+				param:=param + 1;
+				fInteiro:=param + (fInteiro - fInteiro);
+			fim;
+
+			fInteiro:=85;
+		fim;
+	inicio
+		param  := 0;
+		rP:=fInteiro;
+		a:=6;
+		escreva(fInteiro);
+		escreva(a);
+	fim;
+	funcao checkRp:booleano;
+	inicio
+		se(rP  <> 0) entao inicio
+			rP:= rP +1;
+			checkRp:=verdadeiro;
+		fim;
+		checkRp:=falso;
+	fim;
+
+	funcao funcaoExpressao:inteiro;
+		funcao funcaoExpressao2:inteiro;
+		inicio
+			funcaoExpressao2:=4;
+		fim;
+	inicio
+
+		funcaoExpressao:=1 + funcaoExpressao2+funcaoExpressao2 div 2;
+	fim;
+inicio
+	a:=4;
+	p;
+	escreva(rP);
+
+	
+
+	enquanto (checkRp) faca
+	inicio
+		a:=a+1;
+	fim;
+
+	escreva(a);
+
+	escreva(funcaoExpressao);
+fim.

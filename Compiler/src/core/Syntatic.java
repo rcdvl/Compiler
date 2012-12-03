@@ -195,6 +195,7 @@ public class Syntatic implements Runnable {
                 	}
                 	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE) {
                 		analyzeFunctionCall();
+                		codeGenerator.generate("    ", "CALL ", ste.label, "    ");
                 		codeGenerator.generate("", "LDV", ste.returnAddress, "");
 	                    codeGenerator.generate("", "PRN", "", "");
                 	} else {
@@ -427,8 +428,6 @@ public class Syntatic implements Runnable {
             throw new CompileErrorException("erro semantico... funcao nao foi declarada", lexic.lineNumber);
         }
 
-    	SymbolsTableEntry ste = semantic.get(semantic.searchForDeclaration(token.getLexeme()));
-        codeGenerator.generate("    ", "CALL ", ste.label, "    ");
         token = runLexic();
     }
 

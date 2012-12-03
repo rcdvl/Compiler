@@ -287,8 +287,8 @@
      LDC       1       
      SUB               
      STR       13      
-     CALL      29      
      LDV       21      
+     CALL      29      
      LDV       20      
      ADD               
      STR       20      

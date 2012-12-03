@@ -1,6 +1,5 @@
      START             
-     ALLOC     0   2   
-     ALLOC     2   1   
+     ALLOC     0   3   
      JMP       1       
 2    NULL              
      ALLOC     3   1   
@@ -10,6 +9,7 @@
      JMP       5       
 6    NULL              
      ALLOC     5   1   
+     JMP       7       
 7    NULL              
      LDC       1       
      JMPF      8       
@@ -24,11 +24,11 @@
      PRN               
      LDC       0       
      STR       5       
-10   NULL              
+9    NULL              
      LDV       5       
      LDC       500     
      CME               
-     JMPF      11      
+     JMPF      10      
      LDV       5       
      LDC       1       
      INV               
@@ -43,8 +43,8 @@
      LDC       1       
      ADD               
      STR       5       
-     JMP       10      
-11   NULL              
+     JMP       9       
+10   NULL              
      LDC       1       
      LDC       1       
      LDC       0       
@@ -66,10 +66,10 @@
      CMEQ              
      AND               
      OR                
-     JMPF      12      
+     JMPF      11      
      LDV       5       
      PRN               
-12   NULL              
+11   NULL              
      DALLOC    5   1   
      RETURN            
 5    NULL              
@@ -80,14 +80,15 @@
      CALL      6       
      DALLOC    4   1   
      RETURN            
-     JMP       7       
-14   NULL              
-15   NULL              
+12   NULL              
+     ALLOC     4   0   
+     JMP       13      
+13   NULL              
      LDC       1       
-     JMPF      16      
+     JMPF      14      
      LDC       999     
      STR       3       
-16   NULL              
+14   NULL              
      LDV       3       
      LDC       1000    
      LDC       1000    
@@ -110,18 +111,17 @@
      INV               
      SUB               
      CME               
-     JMPF      18      
+     JMPF      15      
      LDV       3       
      PRN               
-18   NULL              
+15   NULL              
      DALLOC    4   0   
      RETURN            
-     JMP       15      
-20   NULL              
-     ALLOC     4   3   
-     ALLOC     7   2   
-21   NULL              
-     CALL      14      
+16   NULL              
+     ALLOC     4   5   
+     JMP       17      
+17   NULL              
+     CALL      12      
      DALLOC    4   5   
      RETURN            
 3    NULL              
@@ -151,7 +151,7 @@
      STR       3       
      LDV       3       
      PRN               
-     CALL      20      
+     CALL      16      
      DALLOC    3   1   
      RETURN            
 1    NULL              
@@ -171,30 +171,30 @@
      STR       2       
      LDV       2       
      NEG               
-     JMPF      22      
+     JMPF      18      
      LDV       1       
      PRN               
-     JMP       23      
-22   NULL              
+     JMP       19      
+18   NULL              
      LDC       100     
      INV               
      STR       1       
      LDV       1       
      PRN               
-23   NULL              
-24   NULL              
+19   NULL              
+20   NULL              
      LDV       0       
      LDC       0       
      CMA               
-     JMPF      25      
+     JMPF      21      
      LDV       0       
      PRN               
      LDV       0       
      LDC       1       
      SUB               
      STR       0       
-     JMP       24      
-25   NULL              
+     JMP       20      
+21   NULL              
      CALL      2       
      DALLOC    0   3   
      HLT               

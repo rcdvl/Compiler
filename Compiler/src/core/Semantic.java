@@ -289,6 +289,7 @@ public class Semantic {
                 // its a var or func
             	SymbolsTableEntry ste = get(searchForDeclaration(symbol));
             	if (ste.type == SymbolsTableEntry.INTEGER_FUNCTION_TYPE || ste.type == SymbolsTableEntry.BOOLEAN_FUNCTION_TYPE) {
+                    generator.generate("    ", "CALL ", ste.label, "    ");
             		generator.generate("", "LDV", ste.returnAddress, "");
             	} else {
             		generator.generate("", "LDV", ste.address, "");
