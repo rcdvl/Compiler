@@ -1,16 +1,20 @@
-{este programa e o primeiro teste}
-programa teste;
-{}
-var x,y,total: inteiro;
-
-funcao soma:inteiro;
+programa leitura;
+var x,r:booleano;
+    a,b:booleano;
+procedimento ver;
+var i: inteiro;
 inicio
-  soma:= x+y;
+  i:= 0;
+  enquanto a
+  faca inicio
+       i:= 1+1;
+       se i = 2
+       entao a:= b
+     fim;
 fim;
 
 inicio
-  leia(x);
-  leia(y);
-  total:= soma;
-  escreva(total)
-fim.
+  x:= verdadeiro;
+  y:= falso;
+  ver;
+fim./

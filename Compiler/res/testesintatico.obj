@@ -20,8 +20,8 @@
      LDC       1       
      SUB               
      STR       2       
-     CALL      3       
      LDV       7       
+     CALL      3       
      LDV       6       
      MULT              
      STR       6       
